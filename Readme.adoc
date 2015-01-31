@@ -1,3 +1,6 @@
+:o: pass:normal[+[{nbsp}]+]
+:x: pass:normal[+[✓]+]
+
 Ansible network interface configuration
 =======================================
 
@@ -51,9 +54,9 @@ Changelog
 
 **0.1** (first release) 01.02.2015
 
-* [x] ipv6 & ipv4 support
-* [x] support for multiple network devices
-* [x] dhcp and static configuration
-* [x] support for bridges
-* [x] additional subnets and ips
-* [x] custom hook scripts
+* {x} ipv6 & ipv4 support
+* {x} support for multiple network devices
+* {x} dhcp and static configuration
+* {x} support for bridges
+* {x} additional subnets and ips
+* {x} custom hook scripts
