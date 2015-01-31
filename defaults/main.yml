@@ -1,0 +1,34 @@
+---
+# Flag whether all network devices are controlled by this role
+#
+# If true, all additional scripts are deleted
+network_manage_devices: yes
+
+# List of all network interface configurations
+#
+# For ipv6 you want to add an additional inet6 entry
+network_interfaces:
+- device: eth0
+  auto: true # enable on boot
+  family: inet # network type eg. inet | inet6
+  method: dhcp # dhcp | static
+  # examples for method 'static'
+  #address: 192.168.1.11
+  #network: 192.168.1.0
+  #netmask: 193.168.1.255
+  #broadcast: 192.168.1.255
+  #gateway: 192.168.1.1
+  #nameservers: ['8.8.8.8']
+  # optional bridge parameters
+  #bridge:
+  #  ports:
+  #  stp:
+  #  fd:
+  #  maxwait:
+  # optional additional subnets/ips
+  #subnets: ['192.168.123.0/24', '192.168.124.11/32']
+  # inline hook scripts
+  pre-up: [] # pre-up script lines
+  up: [] # up script lines
+  down: [] # down script lines
+  post-down: [] # post-down script lines

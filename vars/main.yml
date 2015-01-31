@@ -1,0 +1,5 @@
+---
+network_service: networking
+
+network_all_interfaces_path: "/etc/network/interfaces"
+network_interface_path: "/etc/network/interfaces.d"

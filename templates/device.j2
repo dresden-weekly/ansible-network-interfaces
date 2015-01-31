@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+{% if item.auto -%}
+auto {{ item.device }}
+{% endif -%}
+iface {{ item.device }} {{ item.family }} {{ item.method }}
+{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] -%}
+{%   if key in item -%}
+  {{ key }} {{ item[key] }}
+{%   endif -%}
+{% endfor -%}
+
+{% if item.nameservers is defined -%}
+  dns-nameservers {{ item.nameservers | join(' ') }}
+{% endif -%}
+
+{% if item.bridge is defined -%}
+{%   for key in ['ports', 'stp', 'fd', 'maxwait'] -%}
+{%     if key in item.bridge -%}
+  bridge_{{ key }} {{ item.bridge[key] }}
+{%     endif -%}
+{%   endfor -%}
+{% endif -%}
+
+{% if item.subnets is defined -%}
+{%   for subnet in item.subnets -%}
+  up /sbin/ip addr add {{ subnet }} dev {{ item.device }}
+  down /sbin/ip addr del {{ subnet }} dev {{ item.device }}
+{%   endfor -%}
+{% endif -%}
+
+{% for key in ['pre-up', 'up', 'down', 'post-down'] -%}
+{%   if key in item -%}
+{%     for value in item[key] -%}
+  {{ key }} {{ value }}
+{%     endfor -%}
+{%   endif -%}
+{% endfor -%}

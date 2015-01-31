@@ -1,0 +1,59 @@
+Ansible network interface configuration
+=======================================
+
+This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers
+
+Requirements
+------------
+
+* Ubuntu 12.04 (Precise)
+* Ubuntu 14.04 (Trusty)
+
+Dependencies
+------------
+
+none
+
+Example Playbook
+----------------
+
+[source,yml]
+----
+- hosts: all
+  sudo: true
+  sudo_user: root
+
+  roles:
+  - role: dresden-weekly.network-interfaces
+    network_manage_devices: yes
+    network_interfaces:
+    - device: eth0
+      auto: true
+      family: inet
+      method: static
+      address: 192.168.1.11
+      network: 192.168.1.0
+      netmask: 193.168.1.255
+      gateway: 192.168.1.1
+      nameservers:
+      - 8.8.8.8
+      - 8.8.4.4
+      subnets:
+      - 192.168.1.12/32
+    - device: eth1
+      auto: true
+      family: inet
+      method: dhcp
+----
+
+Changelog
+---------
+
+**0.1** (first release) 01.02.2015
+
+* [x] ipv6 & ipv4 support
+* [x] support for multiple network devices
+* [x] dhcp and static configuration
+* [x] support for bridges
+* [x] additional subnets and ips
+* [x] custom hook scripts
