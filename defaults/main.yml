@@ -9,9 +9,9 @@ network_manage_devices: yes
 # For ipv6 you want to add an additional inet6 entry
 network_interfaces:
 - device: eth0
-  auto: true # enable on boot
-  family: inet # network type eg. inet | inet6
-  method: dhcp # dhcp | static
+  auto: true # enable on boot (default)
+  family: inet # network type eg. inet | inet6 (default)
+  method: dhcp # dhcp | static (default)
   # examples for method 'static'
   #address: 192.168.1.11
   #network: 192.168.1.0
