@@ -9,8 +9,9 @@ This is an Ansible role that manages network interface configuration as it is fo
 Requirements
 ------------
 
-* Ubuntu 12.04 (Precise)
-* Ubuntu 14.04 (Trusty)
+Ubuntu 12.04 (Precise) or Ubuntu 14.04 (Trusty)
+
+May work with other versions, but has never been tested.
 
 Dependencies
 ------------
@@ -52,6 +53,10 @@ Example Playbook
 Changelog
 ---------
 
+**0.2** *TODO*
+
+* {o} open for your ideas, fixes and pull requests
+
 **0.1** (first release) 01.02.2015
 
 * {x} ipv6 & ipv4 support
@@ -60,6 +65,7 @@ Changelog
 * {x} support for bridges
 * {x} additional subnets and ips
 * {x} custom hook scripts
+* {x} remove old interfaces
 
 License
 -------
