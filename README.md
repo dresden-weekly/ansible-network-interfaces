@@ -1,10 +1,6 @@
-:o: pass:normal[+[{nbsp}]+]
-:x: pass:normal[+[✓]+]
-
 Ansible network interface configuration
 =======================================
-
-image:https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg["Ansible Galaxy",link=https://galaxy.ansible.com/list#/roles/2766]
+[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/list#/roles/2766)
 
 This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers
 
@@ -23,8 +19,7 @@ none
 Example Playbook
 ----------------
 
-[source,yml]
-----
+```yml
 - hosts: all
   sudo: true
   sudo_user: root
@@ -50,24 +45,24 @@ Example Playbook
       auto: true
       family: inet
       method: dhcp
-----
+```
 
 Changelog
 ---------
 
 **0.2** *TODO*
 
-* {o} open for your ideas, fixes and pull requests
+* [ ] open for your ideas, fixes and pull requests
 
 **0.1** (first release) 01.02.2015
 
-* {x} ipv6 & ipv4 support
-* {x} support for multiple network devices
-* {x} dhcp and static configuration
-* {x} support for bridges
-* {x} additional subnets and ips
-* {x} custom hook scripts
-* {x} remove old interfaces
+* [✓] ipv6 & ipv4 support
+* [✓] support for multiple network devices
+* [✓] dhcp and static configuration
+* [✓] support for bridges
+* [✓] additional subnets and ips
+* [✓] custom hook scripts
+* [✓] remove old interfaces
 
 License
 -------
