@@ -1,37 +1,47 @@
 # {{ ansible_managed }}
-{% if item.auto | default(true, true) -%}
+
+{% if item.auto | default(true) %}
 auto {{ item.device }}
-{% endif -%}
+{% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] -%}
-{%   if key in item -%}
+{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] %}
+{%   if key in item %}
   {{ key }} {{ item[key] }}
-{%   endif -%}
-{% endfor -%}
+{%   endif %}
+{% endfor %}
 
-{% if item.nameservers is defined -%}
+{%- if item.nameservers is defined %}
+
   dns-nameservers {{ item.nameservers | join(' ') }}
-{% endif -%}
+{% endif %}
 
-{% if item.bridge is defined -%}
-{%   for key in ['ports', 'stp', 'fd', 'maxwait'] -%}
+{%- if item.bridge is defined -%}
+
+  # bridge settings
+{%   for key in ['ports', 'stp', 'fd', 'maxwait'] %}
 {%     if key in item.bridge -%}
   bridge_{{ key }} {{ item.bridge[key] }}
-{%     endif -%}
-{%   endfor -%}
-{% endif -%}
+{%     endif %}
+{%   endfor %}
+{% endif %}
 
-{% if item.subnets is defined -%}
-{%   for subnet in item.subnets -%}
+{%- if item.subnets is defined %}
+
+  # additional subnets
+{%   for subnet in item.subnets %}
   up /sbin/ip addr add {{ subnet }} dev {{ item.device }}
   down /sbin/ip addr del {{ subnet }} dev {{ item.device }}
-{%   endfor -%}
-{% endif -%}
+{%   endfor %}
+{% endif %}
 
-{% for key in ['pre-up', 'up', 'down', 'post-down'] -%}
-{%   if key in item -%}
-{%     for value in item[key] -%}
+{%- if ['pre-up', 'up', 'down', 'post-down'] | intersect(item.keys()) %}
+
+  # hook scripts
+{%   for key in ['pre-up', 'up', 'down', 'post-down'] %}
+{%     if key in item %}
+{%       for value in item[key] %}
   {{ key }} {{ value }}
-{%     endfor -%}
-{%   endif -%}
-{% endfor -%}
+{%       endfor %}
+{%     endif %}
+{%   endfor %}
+{% endif %}
