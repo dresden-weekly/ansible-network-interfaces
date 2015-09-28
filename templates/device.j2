@@ -18,7 +18,7 @@ iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method
 {%- if item.bridge is defined -%}
 
   # bridge settings
-{%   for key in ['ports', 'stp', 'fd', 'maxwait'] %}
+{%   for key in ['ports', 'stp', 'fd', 'maxwait', 'waitport'] %}
 {%     if key in item.bridge -%}
   bridge_{{ key }} {{ item.bridge[key] }}
 {%     endif %}
