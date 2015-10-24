@@ -1,5 +1,33 @@
 ---
-- name: restart
+- name: network all interfaces changed
   service:
     name: "{{ network_service }}"
     state: restarted
+  when: network_allow_service_restard
+  register: network_service_restart_result
+
+- name: network restart interface service
+  service:
+    name: "{{ network_service }}"
+    state: restarted
+    arguments: "INTERFACE={{ item.0 }}"
+  when: >
+    not network_service_restart_result.changed
+    and ('service' == network_restart_method)
+    and (0 != item.1 | selectattr('changed') | list | length)
+    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
+      or (true in item.1 | selectattr('item.auto') | list)
+    )
+  with_items: network_configuration_result.results | default([]) | groupby('item.device')
+
+- name: network restart interface command
+  shell: >
+    {{ network_interface_restart_commands[ network_restart_method ] }}
+  when: >
+    not network_service_restart_result.changed
+    and (network_restart_method in network_interface_restart_commands)
+    and (0 != item.1 | selectattr('changed') | list | length)
+    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
+      or (true in item.1 | selectattr('item.auto') | list)
+    )
+  with_items: network_configuration_result.results | default([]) | groupby('item.device')

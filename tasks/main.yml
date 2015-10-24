@@ -9,14 +9,9 @@
   template:
     src: all_interfaces.j2
     dest: "{{ network_all_interfaces_path }}"
-  notify: restart
+  notify:
+  - network all interfaces changed
   when: network_interfaces
-
-- name: list network interfaces
-  command: "find {{ network_interface_path }} -type f"
-  changed_when: no
-  when: network_interfaces
-  register: network_existing_files
 
 - name: configurations
   template:
@@ -24,32 +19,16 @@
     dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
   with_items: network_interfaces
   register: network_configuration_result
+  notify:
+  - network restart interface service
+  - network restart interface command
 
-- name: configured files
-  set_fact:
-    network_configured_files: >
-      [{% for item in network_configuration_result.results | default([]) -%}
-        u"{{ item.dest | default(item.path) }}"
-        {{ '' if loop.last else ',' }}
-      {%- endfor %}]
+- include: manage_devices.yml
+  when: network_manage_devices
 
-- name: remove configurations
-  file:
-    dest: "{{ item }}"
-    state: absent
-  when: >
-    network_manage_devices
-    and (item not in network_configured_files)
-  with_items: network_existing_files.stdout_lines | default([])
-
-- name: restart devices
-  service:
-    name: "{{ network_service }}"
-    state: restarted
-    arguments: "INTERFACE={{ item.0 }}"
-  when: >
-    (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
-      or (true in item.1 | selectattr('item.auto') | list)
-    )
-  with_items: network_configuration_result.results | default([]) | groupby('item.device')
+# TODO: use this to restart interfaces that are active
+#- name: list active interfaces
+#  command: "cat {{ network_interface_states_path }}"
+#  changed_when: no
+#  when: network_configuration_result.changed
+#  register: network_active_interfaces

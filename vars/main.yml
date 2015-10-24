@@ -3,3 +3,7 @@ network_service: networking
 
 network_all_interfaces_path: "/etc/network/interfaces"
 network_interface_path: "/etc/network/interfaces.d"
+
+network_interface_states_path: "/run/network/ifstate"
+
+network_interface_restart_command: "ifdown {{ item.0 }}; ifup {{ item.0 }}"
