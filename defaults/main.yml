@@ -25,6 +25,7 @@ network_interfaces:
   #  stp:
   #  fd:
   #  maxwait:
+  #  waitport:
   # optional additional subnets/ips
   #subnets: ['192.168.123.0/24', '192.168.124.11/32']
   # inline hook scripts
