@@ -29,6 +29,7 @@ Example Playbook
     network_manage_devices: yes
     network_interfaces:
     - device: eth0
+      description: just a description for humans to understand
       auto: true
       family: inet
       method: static
