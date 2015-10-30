@@ -4,7 +4,7 @@
 auto {{ item.device }}
 {% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] %}
+{% for key in ['address', 'broadcast', 'gateway', 'netmask', 'network'] %}
 {%   if key in item %}
   {{ key }} {{ item[key] }}
 {%   endif %}
