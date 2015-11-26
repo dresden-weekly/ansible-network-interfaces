@@ -74,6 +74,7 @@ Changelog
 * [✓] support for multiple network devices
 * [✓] dhcp and static configuration
 * [✓] support for bridges
+* [✓] support for bonding
 * [✓] additional subnets and ips
 * [✓] custom hook scripts
 * [✓] remove old interfaces

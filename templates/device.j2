@@ -4,7 +4,7 @@
 auto {{ item.device }}
 {% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['address', 'broadcast', 'description', 'gateway', 'netmask', 'network', 'vlan-raw-device'] %}
+{% for key in ['description', 'bond-mode', 'bond-miimon', 'bond-slaves', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'vlan-raw-device', 'bond-master'] %}
 {%   if key in item %}
   {{ key }} {{ item[key] }}
 {%   endif %}
@@ -13,6 +13,9 @@ iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method
 {%- if item.nameservers is defined %}
 
   dns-nameservers {{ item.nameservers | join(' ') }}
+{% endif %}
+{%- if item.dns_search is defined %}
+  dns-search {{ item.dns_search }}
 {% endif %}
 
 {%- if item.bridge is defined -%}
