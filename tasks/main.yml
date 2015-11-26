@@ -26,7 +26,7 @@
 - name: configurations
   template:
     src: device.j2
-    dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
+    dest: "{{ network_interface_path }}/{{ item.device }}.cfg"
   with_items: network_interfaces
   register: network_configuration_result
 
