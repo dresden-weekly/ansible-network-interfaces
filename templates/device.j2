@@ -4,7 +4,7 @@
 auto {{ item.device }}
 {% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['description', 'bond-mode', 'bond-miimon', 'bond-slaves', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'vlan-raw-device', 'bond-master'] %}
+{% for key in ['description', 'bond-mode', 'bond-miimon', 'bond-slaves', 'bond-lacp-rate', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'vlan-raw-device', 'bond-master'] %}
 {%   if key in item %}
   {{ key }} {{ item[key] }}
 {%   endif %}
@@ -37,10 +37,10 @@ iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method
 {%   endfor %}
 {% endif %}
 
-{%- if ['pre-up', 'up', 'down', 'post-down'] | intersect(item.keys()) %}
+{%- if ['pre-up', 'up', 'down', 'post-up', 'post-down'] | intersect(item.keys()) %}
 
   # hook scripts
-{%   for key in ['pre-up', 'up', 'down', 'post-down'] %}
+{%   for key in ['pre-up', 'up', 'down', 'post-up', 'post-down'] %}
 {%     if key in item %}
 {%       for value in item[key] %}
   {{ key }} {{ value }}

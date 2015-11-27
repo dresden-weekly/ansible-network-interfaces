@@ -32,4 +32,5 @@ network_interfaces:
   pre-up: [] # pre-up script lines
   up: [] # up script lines
   down: [] # down script lines
+  post-up: [] # post-up script lines
   post-down: [] # post-down script lines
