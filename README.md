@@ -59,6 +59,27 @@ Example Playbook
       vlan-raw-device: eth0
       up:
       - route add default gw 1.2.3.254
+
+    - device: eth2 
+      description: First bonding device
+      auto: true
+      family: inet
+      method: manual
+      bond-master: bond0
+
+    - device: bond0
+      descritption: This bonding device only has one interface
+      auto: true
+      family: inet
+      method: static
+      bond-mode: active-backup
+      bond-miimon: 100
+      bond-slaves: eth2
+      address: 192.160.50.1
+      netmask: 255.255.255.0
+      dns_search: "localdomain"
+      up: [ "ip route add 172.16.0.0/24 via 192.168.50.254 dev bond00" ]
+
 ```
 
 Changelog
@@ -74,6 +95,7 @@ Changelog
 * [✓] support for multiple network devices
 * [✓] dhcp and static configuration
 * [✓] support for bridges
+* [✓] support for bonding
 * [✓] additional subnets and ips
 * [✓] custom hook scripts
 * [✓] remove old interfaces
