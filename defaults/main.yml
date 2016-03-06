@@ -10,6 +10,7 @@ network_manage_devices: yes
 network_interfaces:
 - device: eth0
   auto: true # enable on boot (default)
+  allow_hotplug: false
   family: inet # network type eg. inet | inet6 (default)
   method: dhcp # dhcp | static (default)
   # examples for method 'static'
