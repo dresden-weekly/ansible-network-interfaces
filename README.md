@@ -78,7 +78,8 @@ Example Playbook
       address: 192.160.50.1
       netmask: 255.255.255.0
       dns_search: "localdomain"
-      up: [ "ip route add 172.16.0.0/24 via 192.168.50.254 dev bond00" ]
+      up:
+      - ip route add 172.16.0.0/24 via 192.168.50.254 dev bond0
 
 ```
 
