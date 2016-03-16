@@ -40,10 +40,10 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%     endfor %}
 {%   endif %}
 
-{%-  if ['pre-up', 'up', 'down', 'post-up', 'post-down'] | intersect(config.keys()) %}
+{%-  if ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] | intersect(config.keys()) %}
 
   # hook scripts
-{%     for key in ['pre-up', 'up', 'down', 'post-up', 'post-down'] %}
+{%     for key in ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] %}
 {%       if key in config %}
 {%         for value in config[key] %}
   {{ key }} {{ value }}

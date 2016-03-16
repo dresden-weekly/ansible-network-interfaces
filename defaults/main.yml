@@ -31,6 +31,7 @@ network_interfaces:
   # inline hook scripts
   pre-up: [] # pre-up script lines
   up: [] # up script lines
+  post-up: [] # post-up script lines (alias for up)
+  pre-down: [] # pre-down script lines (alias for down)
   down: [] # down script lines
-  post-up: [] # post-up script lines
   post-down: [] # post-down script lines
