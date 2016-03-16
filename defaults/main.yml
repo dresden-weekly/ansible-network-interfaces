@@ -9,7 +9,10 @@ network_manage_devices: yes
 # For ipv6 you want to add an additional inet6 entry
 network_interfaces:
 - device: eth0
+  # auto & allow are only used for the first device entry
   auto: true # enable on boot (default)
+  allow: [] # array of allow-[stanzas] eg. allow-hotplug
+
   family: inet # network type eg. inet | inet6 (default)
   method: dhcp # dhcp | static (default)
   # examples for method 'static'
@@ -18,16 +21,28 @@ network_interfaces:
   #netmask: 193.168.1.255
   #broadcast: 192.168.1.255
   #gateway: 192.168.1.1
+
+  # optional dns settings
   #nameservers: ['8.8.8.8']
-  # optional bridge parameters
-  #bridge:
+  #dns_search: "domain.net" # appended dns search string
+
+  # optional additional subnets/ips
+  #subnets: ['192.168.123.0/24', '192.168.124.11/32']
+
+  bridge: {} # optional bridge parameters
   #  ports:
   #  stp:
   #  fd:
   #  maxwait:
   #  waitport:
-  # optional additional subnets/ips
-  #subnets: ['192.168.123.0/24', '192.168.124.11/32']
+
+  bond: {} # optional bonding parameters
+  #  mode:
+  #  miimon:
+  #  master:
+  #  slaves:
+  #  lacp-rate:
+
   # inline hook scripts
   pre-up: [] # pre-up script lines
   up: [] # up script lines
