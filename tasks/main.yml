@@ -26,8 +26,9 @@
 - name: configurations
   template:
     src: device.j2
-    dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
-  with_items: "{{network_interfaces}}"
+    dest: "{{ network_interface_path }}/device-{{ item.0 }}"
+  with_items:
+  - "{{network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
 
 - name: configured files
@@ -48,14 +49,13 @@
   with_items: "{{network_existing_files.stdout_lines | default([])}}"
 
 - name: restart devices
+# schema: network_configuration_result.results
+#   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
   service:
     name: "{{ network_service }}"
     state: restarted
-    arguments: "INTERFACE={{ item.0 }}"
+    arguments: "INTERFACE={{ item.item.0 }}"
   when: >
-    (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
-      or (true in item.1 | selectattr('item.auto') | list)
-    )
-  with_items:
-  - "{{network_configuration_result.results | default([]) | groupby('item.device')}}"
+    item.changed
+    and item.item.1.0.auto | default(true)
+  with_items: "{{network_configuration_result.results}}"
