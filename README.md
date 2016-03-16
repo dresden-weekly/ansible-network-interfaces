@@ -28,7 +28,9 @@ Example Playbook
   - role: dresden-weekly.network-interfaces
     network_manage_devices: yes
     network_interfaces:
+
     - device: eth0
+      description: just a description for humans to understand
       auto: true
       family: inet
       method: static
@@ -41,10 +43,44 @@ Example Playbook
       - 8.8.4.4
       subnets:
       - 192.168.1.12/32
+
     - device: eth1
+      description: simple dhcp client interface
       auto: true
       family: inet
       method: dhcp
+
+    - device: vlan123
+      description: sample vlan interface using eth0 and tagged for VLAN 123.
+      method: static
+      address: 1.2.3.4
+      netmask: 24
+      broadcast: 1.2.3.255
+      vlan-raw-device: eth0
+      up:
+      - route add default gw 1.2.3.254
+
+    - device: eth2 
+      description: First bonding device
+      auto: true
+      family: inet
+      method: manual
+      bond-master: bond0
+
+    - device: bond0
+      descritption: This bonding device only has one interface
+      auto: true
+      family: inet
+      method: static
+      bond-mode: active-backup
+      bond-miimon: 100
+      bond-slaves: eth2
+      address: 192.160.50.1
+      netmask: 255.255.255.0
+      dns_search: "localdomain"
+      up:
+      - ip route add 172.16.0.0/24 via 192.168.50.254 dev bond0
+
 ```
 
 Changelog
@@ -60,6 +96,7 @@ Changelog
 * [✓] support for multiple network devices
 * [✓] dhcp and static configuration
 * [✓] support for bridges
+* [✓] support for bonding
 * [✓] additional subnets and ips
 * [✓] custom hook scripts
 * [✓] remove old interfaces

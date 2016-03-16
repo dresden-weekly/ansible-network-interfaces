@@ -1,0 +1,12 @@
+---
+- name: create directory
+  file:
+    path: "{{ network_interface_path }}"
+    state: directory
+
+- name: all interfaces
+  template:
+    src: all_interfaces.j2
+    dest: "{{ network_all_interfaces_path }}"
+  notify:
+  - network all interfaces changed

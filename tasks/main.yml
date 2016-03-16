@@ -1,23 +1,17 @@
 ---
-- name: create directory
-  file:
-    path: "{{ network_interface_path }}"
-    state: directory
-  when: network_interfaces
+- name: ensure basic networking tools are installed
+  apt: pkg={{ item }} state=present
+  with_items:
+  - vlan
 
-- name: all interfaces
-  template:
-    src: all_interfaces.j2
-    dest: "{{ network_all_interfaces_path }}"
-  notify:
-  - network all interfaces changed
+- include: all_interfaces.yml
   when: network_interfaces
 
 - name: configurations
   template:
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
-  with_items: network_interfaces
+  with_items: "{{network_interfaces}}"
   register: network_configuration_result
   notify:
   - network restart interface service
