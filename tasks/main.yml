@@ -2,7 +2,7 @@
 - name: ensure basic networking tools are installed
   apt: pkg={{ item }} state=present
   with_items:
-   - vlan
+  - vlan
 
 - name: create directory
   file:
@@ -27,7 +27,7 @@
   template:
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
-  with_items: network_interfaces
+  with_items: "{{network_interfaces}}"
   register: network_configuration_result
 
 - name: configured files
@@ -45,7 +45,7 @@
   when: >
     network_manage_devices
     and (item not in network_configured_files)
-  with_items: network_existing_files.stdout_lines | default([])
+  with_items: "{{network_existing_files.stdout_lines | default([])}}"
 
 - name: restart devices
   service:
@@ -57,4 +57,5 @@
     and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
       or (true in item.1 | selectattr('item.auto') | list)
     )
-  with_items: network_configuration_result.results | default([]) | groupby('item.device')
+  with_items:
+  - "{{network_configuration_result.results | default([]) | groupby('item.device')}}"
