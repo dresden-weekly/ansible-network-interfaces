@@ -30,6 +30,7 @@ network_interfaces:
   family: inet # network type eg. inet | inet6 (default)
   method: dhcp # dhcp | static (default)
   # examples for method 'static'
+  #description: 'a user description'
   #address: 192.168.1.11
   #network: 192.168.1.0
   #netmask: 193.168.1.255
@@ -56,6 +57,10 @@ network_interfaces:
   #  master:
   #  slaves:
   #  lacp-rate:
+
+  # optional vlan settings
+  vlan: {}
+  #  raw-device: 'eth0'
 
   # inline hook scripts
   pre-up: [] # pre-up script lines

@@ -21,14 +21,14 @@ Example Playbook
 
 ```yml
 - hosts: all
-  sudo: true
-  sudo_user: root
+  become: true
+  become_user: root
 
   roles:
   - role: dresden-weekly.network-interfaces
     network_manage_devices: yes
-    network_interfaces:
 
+    network_interfaces:
     - device: eth0
       description: just a description for humans to understand
       auto: true
@@ -56,39 +56,51 @@ Example Playbook
       address: 1.2.3.4
       netmask: 24
       broadcast: 1.2.3.255
-      vlan-raw-device: eth0
+      vlan:
+        raw-device: eth0
       up:
       - route add default gw 1.2.3.254
 
-    - device: eth2 
+    - device: eth2
       description: First bonding device
       auto: true
       family: inet
       method: manual
-      bond-master: bond0
+      bond:
+        master: bond0
 
     - device: bond0
-      descritption: This bonding device only has one interface
-      auto: true
+      description: This bonding device only has one interface
+      allow:
+      - hotplug
       family: inet
       method: static
-      bond-mode: active-backup
-      bond-miimon: 100
-      bond-slaves: eth2
+      bond:
+        mode: active-backup
+        miimon: 100
+        slaves: eth2
       address: 192.160.50.1
       netmask: 255.255.255.0
       dns_search: "localdomain"
       up:
       - ip route add 172.16.0.0/24 via 192.168.50.254 dev bond0
-
 ```
 
 Changelog
 ---------
 
-**0.2** *TODO*
+**1.1** (*TODO*)
 
 * [ ] open for your ideas, fixes and pull requests
+
+**1.0** (Ansible 2 release) 30.03.2016
+
+* [✓] compatible with Ansible 2.x
+* [✓] support all hook aliases
+* [✓] support for all allow stanzas
+* [✓] full device restart control
+* [✓] improved support for bonding
+* [✓] one config file per device
 
 **0.1** (first release) 01.02.2015
 
