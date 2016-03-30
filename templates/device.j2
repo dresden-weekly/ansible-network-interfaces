@@ -5,15 +5,19 @@
 {%   if config.auto | default(loop.first) %}
 auto {{ config.device }}
 {%   endif %}
+{%   for stanza in config.allow | default([]) %}
+allow-{{ stanza }}
+{%   endfor %}
 
 iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.method | default('dhcp', true) }}
-{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'vlan-raw-device'] %}
+{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network'] %}
 {%   for key in iface_keys %}
 {%     if key in config %}
   {{ key }} {{ config[key] }}
 {%     endif %}
 {%   endfor -%}
 
+{# nameservers #}
 {%-  if (config.nameservers is defined) and (0 < config.nameservers | length) %}
 
   dns-nameservers {{ config.nameservers | join(' ') }}
@@ -22,6 +26,17 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
   dns-search {{ config.dns_search }}
 {%   endif -%}
 
+{# subnets #}
+{%-  if (config.subnets is defined) and (0 < config.subnets | length) %}
+
+  # additional subnets
+{%     for subnet in config.subnets %}
+  up /sbin/ip addr add {{ subnet }} dev {{ config.device }}
+  down /sbin/ip addr del {{ subnet }} dev {{ config.device }}
+{%     endfor %}
+{%   endif -%}
+
+{# bridge settings #}
 {%   set bridge_keys = ['ports', 'stp', 'fd', 'maxwait', 'waitport'] %}
 {%-  if (config.bridge is defined) and (bridge_keys | intersect(config.bridge.keys())) -%}
 
@@ -33,15 +48,32 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%     endfor %}
 {%   endif -%}
 
-{%-  if (config.subnets is defined) and (0 < config.subnets | length) %}
+{# bond parameters #}
+{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate'] %}
+{%-  if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
 
-  # additional subnets
-{%     for subnet in config.subnets %}
-  up /sbin/ip addr add {{ subnet }} dev {{ config.device }}
-  down /sbin/ip addr del {{ subnet }} dev {{ config.device }}
+  # bond parameters
+{%     for key in bond_keys %}
+{%       if key in config.bond -%}
+  bond-{{ key }} {{ config.bond[key] }}
+{%       endif %}
 {%     endfor %}
-{%   endif -%}
+{%   endif %}
 
+
+{# vlan #}
+{%   set vlan_keys = ['raw-device'] %}
+{%-  if (config.vlan is defined) and (vlan_keys | intersect(config.vlan.keys())) -%}
+
+  # vlan
+{%     for key in vlan_keys %}
+{%       if key in config.vlan -%}
+  vlan-{{ key }} {{ config.vlan[key] }}
+{%       endif %}
+{%     endfor %}
+{%   endif %}
+
+{# hook scripts #}
 {%   set hook_keys = ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] %}
 {%-  if hook_keys | intersect(config.keys()) %}
 
@@ -54,16 +86,5 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%       endif %}
 {%     endfor %}
 {%   endif -%}
-
-{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate'] %}
-{%-  if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
-
-  # bond parameters
-{%     for key in bond_keys %}
-{%       if key in config.bond -%}
-  bond-{{ key }} {{ config.bond[key] }}
-{%       endif %}
-{%     endfor %}
-{%   endif %}
 
 {% endfor %}
