@@ -6,5 +6,7 @@ network_interface_path: "/etc/network/interfaces.d"
 
 network_interface_states_path: "/run/network/ifstate"
 
+device: '' # <- will be the device to restart
+configs: [] # <- contains all configurations for this device
 network_interface_restart_commands:
-  interface: "ifdown {{ item.0 }}; ifup {{ item.0 }}"
+  interface: "ifdown {{ device }}; ifup {{ device }}"

@@ -7,29 +7,27 @@
   register: network_service_restart_result
 
 - name: network restart interface service
+# schema: network_configuration_result.results
+#   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
   service:
     name: "{{ network_service }}"
     state: restarted
-    arguments: "INTERFACE={{ item.0 }}"
+    arguments: "INTERFACE={{ item.item.0 }}"
   when: >
     (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and ('service' == network_restart_method)
-    and (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
-      or (true in item.1 | selectattr('item.auto') | list)
-    )
-  with_items:
-  - "{{network_configuration_result.results | default([]) | groupby('item.device')}}"
+    and item.changed
+    and item.item.1.0.auto | default(true)
+  with_items: "{{network_configuration_result.results | default([])}}"
 
 - name: network restart interface command
-  shell: >
-    {{ network_interface_restart_commands[ network_restart_method ] }}
+  include: 'exec_restart_command.yml'
+  vars:
+    device: "{{ item.item.0 }}"
+    configs: "{{ item.item.1 }}"
   when: >
     (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and (network_restart_method in network_interface_restart_commands)
-    and (0 != item.1 | selectattr('changed') | list | length)
-    and ((0 != item.1 | selectattr('item.auto', 'undefined') | list | length)
-      or (true in item.1 | selectattr('item.auto') | list)
-    )
-  with_items:
-  - "{{network_configuration_result.results | default([]) | groupby('item.device')}}"
+    and item.changed
+    and item.item.1.0.auto | default(true)
+  with_items: "{{network_configuration_result.results | default([])}}"

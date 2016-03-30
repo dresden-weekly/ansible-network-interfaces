@@ -1,6 +1,10 @@
 ---
 - name: ensure basic networking tools are installed
-  apt: pkg={{ item }} state=present
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
   with_items:
   - vlan
 
@@ -10,8 +14,9 @@
 - name: configurations
   template:
     src: device.j2
-    dest: "{{ network_interface_path }}/device-{{ item.device }}-{{ item.family | default('inet') }}"
-  with_items: "{{network_interfaces}}"
+    dest: "{{ network_interface_path }}/device-{{ item.0 }}"
+  with_items:
+  - "{{network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
   notify:
   - network restart interface service
@@ -19,10 +24,3 @@
 
 - include: manage_devices.yml
   when: network_manage_devices
-
-# TODO: use this to restart interfaces that are active
-#- name: list active interfaces
-#  command: "cat {{ network_interface_states_path }}"
-#  changed_when: no
-#  when: network_configuration_result.changed
-#  register: network_active_interfaces

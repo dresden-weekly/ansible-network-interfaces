@@ -1,0 +1,4 @@
+---
+- name: network restart interface command
+  shell: >
+    {{ network_interface_restart_commands[ network_restart_method ] }}
