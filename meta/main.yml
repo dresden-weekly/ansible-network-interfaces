@@ -3,7 +3,7 @@ galaxy_info:
   description: 'This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers'
   company: Dresden Weekly
   license: MIT
-  min_ansible_version: 1.8
+  min_ansible_version: 2.0
   platforms:
   #- name: EL
   #  versions:

@@ -1,47 +1,90 @@
 # {{ ansible_managed }}
+{# schema: item = [ <device>, [<config>, ...] ] #}
 
-{% if item.auto | default(true) %}
-auto {{ item.device }}
-{% endif %}
-iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] %}
-{%   if key in item %}
-  {{ key }} {{ item[key] }}
+{% for config in item.1 %}
+{%   if config.auto | default(loop.first) %}
+auto {{ config.device }}
 {%   endif %}
-{% endfor %}
-
-{%- if item.nameservers is defined %}
-
-  dns-nameservers {{ item.nameservers | join(' ') }}
-{% endif %}
-
-{%- if item.bridge is defined -%}
-
-  # bridge settings
-{%   for key in ['ports', 'stp', 'fd', 'maxwait'] %}
-{%     if key in item.bridge -%}
-  bridge_{{ key }} {{ item.bridge[key] }}
-{%     endif %}
+{%   for stanza in config.allow | default([]) %}
+allow-{{ stanza }}
 {%   endfor %}
-{% endif %}
 
-{%- if item.subnets is defined %}
+iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.method | default('dhcp', true) }}
+{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network'] %}
+{%   for key in iface_keys %}
+{%     if key in config %}
+  {{ key }} {{ config[key] }}
+{%     endif %}
+{%   endfor -%}
+
+{# nameservers #}
+{%-  if (config.nameservers is defined) and (0 < config.nameservers | length) %}
+
+  dns-nameservers {{ config.nameservers | join(' ') }}
+{%   endif %}
+{%-  if config.dns_search is defined %}
+  dns-search {{ config.dns_search }}
+{%   endif -%}
+
+{# subnets #}
+{%-  if (config.subnets is defined) and (0 < config.subnets | length) %}
 
   # additional subnets
-{%   for subnet in item.subnets %}
-  up /sbin/ip addr add {{ subnet }} dev {{ item.device }}
-  down /sbin/ip addr del {{ subnet }} dev {{ item.device }}
-{%   endfor %}
-{% endif %}
+{%     for subnet in config.subnets %}
+  up /sbin/ip addr add {{ subnet }} dev {{ config.device }}
+  down /sbin/ip addr del {{ subnet }} dev {{ config.device }}
+{%     endfor %}
+{%   endif -%}
 
-{%- if ['pre-up', 'up', 'down', 'post-down'] | intersect(item.keys()) %}
+{# bridge settings #}
+{%   set bridge_keys = ['ports', 'stp', 'fd', 'maxwait', 'waitport'] %}
+{%-  if (config.bridge is defined) and (bridge_keys | intersect(config.bridge.keys())) -%}
+
+  # bridge settings
+{%     for key in bridge_keys %}
+{%       if key in config.bridge -%}
+  bridge_{{ key }} {{ config.bridge[key] }}
+{%       endif %}
+{%     endfor %}
+{%   endif -%}
+
+{# bond parameters #}
+{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate'] %}
+{%-  if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
+
+  # bond parameters
+{%     for key in bond_keys %}
+{%       if key in config.bond -%}
+  bond-{{ key }} {{ config.bond[key] }}
+{%       endif %}
+{%     endfor %}
+{%   endif %}
+
+
+{# vlan #}
+{%   set vlan_keys = ['raw-device'] %}
+{%-  if (config.vlan is defined) and (vlan_keys | intersect(config.vlan.keys())) -%}
+
+  # vlan
+{%     for key in vlan_keys %}
+{%       if key in config.vlan -%}
+  vlan-{{ key }} {{ config.vlan[key] }}
+{%       endif %}
+{%     endfor %}
+{%   endif %}
+
+{# hook scripts #}
+{%   set hook_keys = ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] %}
+{%-  if hook_keys | intersect(config.keys()) %}
 
   # hook scripts
-{%   for key in ['pre-up', 'up', 'down', 'post-down'] %}
-{%     if key in item %}
-{%       for value in item[key] %}
+{%     for key in hook_keys %}
+{%       if key in config %}
+{%         for value in config[key] %}
   {{ key }} {{ value }}
-{%       endfor %}
-{%     endif %}
-{%   endfor %}
-{% endif %}
+{%         endfor %}
+{%       endif %}
+{%     endfor %}
+{%   endif -%}
+
+{% endfor %}
