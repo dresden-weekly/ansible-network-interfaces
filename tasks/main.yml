@@ -1,27 +1,15 @@
 ---
 - name: ensure basic networking tools are installed
-  apt: pkg={{ item }} state=present
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
   with_items:
   - vlan
 
-- name: create directory
-  file:
-    path: "{{ network_interface_path }}"
-    state: directory
+- include: all_interfaces.yml
   when: network_interfaces
-
-- name: all interfaces
-  template:
-    src: all_interfaces.j2
-    dest: "{{ network_all_interfaces_path }}"
-  notify: restart
-  when: network_interfaces
-
-- name: list network interfaces
-  command: "find {{ network_interface_path }} -type f"
-  changed_when: no
-  when: network_interfaces
-  register: network_existing_files
 
 - name: configurations
   template:
@@ -30,32 +18,9 @@
   with_items:
   - "{{network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
+  notify:
+  - network restart interface service
+  - network restart interface command
 
-- name: configured files
-  set_fact:
-    network_configured_files: >
-      [{% for item in network_configuration_result.results | default([]) -%}
-        u"{{ item.dest | default(item.path) }}"
-        {{ '' if loop.last else ',' }}
-      {%- endfor %}]
-
-- name: remove configurations
-  file:
-    dest: "{{ item }}"
-    state: absent
-  when: >
-    network_manage_devices
-    and (item not in network_configured_files)
-  with_items: "{{network_existing_files.stdout_lines | default([])}}"
-
-- name: restart devices
-# schema: network_configuration_result.results
-#   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
-  service:
-    name: "{{ network_service }}"
-    state: restarted
-    arguments: "INTERFACE={{ item.item.0 }}"
-  when: >
-    item.changed
-    and item.item.1.0.auto | default(true)
-  with_items: "{{network_configuration_result.results}}"
+- include: manage_devices.yml
+  when: network_manage_devices

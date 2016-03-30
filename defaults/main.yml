@@ -4,6 +4,20 @@
 # If true, all additional scripts are deleted
 network_manage_devices: yes
 
+# Allow the network to restart
+#
+# This is only triggered, when the all interface file was changed
+network_allow_service_restart: yes
+
+# How should changed interfaces be treated?
+#
+# Options:
+#   service - restart the network service for the interface
+#   interface - down & up the interface
+#   nothing - do nothing
+#   * - undefined behavior
+network_restart_method: service
+
 # List of all network interface configurations
 #
 # For ipv6 you want to add an additional inet6 entry
