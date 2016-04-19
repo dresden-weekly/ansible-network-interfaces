@@ -103,7 +103,7 @@ Changelog
 * [✓] support `xmit_hash_policy` for bond (thanks @benner)
 * [ ] open for your ideas, fixes and pull requests
 
-**1.0** (Ansible 2 release) 30.03.2016
+**1.0** (Ansible 2 release) 2016-03-30
 
 * [✓] compatible with Ansible 2.x
 * [✓] support all hook aliases
@@ -112,7 +112,7 @@ Changelog
 * [✓] improved support for bonding
 * [✓] one config file per device
 
-**0.1** (first release) 01.02.2015
+**0.1** (first release) 2015-02-01
 
 * [✓] ipv6 & ipv4 support
 * [✓] support for multiple network devices
