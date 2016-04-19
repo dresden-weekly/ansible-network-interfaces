@@ -100,6 +100,7 @@ Changelog
 
 **1.1** (*TODO*)
 
+* [✓] support `xmit_hash_policy` for bond (thanks @benner)
 * [ ] open for your ideas, fixes and pull requests
 
 **1.0** (Ansible 2 release) 30.03.2016
