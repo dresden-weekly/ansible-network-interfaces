@@ -69,6 +69,14 @@ Example Playbook
       bond:
         master: bond0
 
+    - device: eth3
+      description: Second bonding device
+      auto: true
+      family: inet
+      method: manual
+      bond:
+        master: bond0
+
     - device: bond0
       description: This bonding device only has one interface
       allow:
@@ -76,9 +84,10 @@ Example Playbook
       family: inet
       method: static
       bond:
-        mode: active-backup
+        mode: 802.3ad
+        xmit-hash-policy: layer3+4
         miimon: 100
-        slaves: eth2
+        slaves: eth2 eth3
       address: 192.160.50.1
       netmask: 255.255.255.0
       dns_search: "localdomain"

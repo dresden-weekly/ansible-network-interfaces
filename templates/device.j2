@@ -49,7 +49,7 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%   endif -%}
 
 {# bond parameters #}
-{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate'] %}
+{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate', 'xmit-hash-policy'] %}
 {%-  if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
 
   # bond parameters
