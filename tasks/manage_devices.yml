@@ -7,7 +7,7 @@
 # depending on change the result stores dest or path
 - name: configured files
   set_fact:
-    network_configured_files: >
+    network_configured_files: >-
       [{% for item in network_configuration_result.results | default([]) -%}
         u"{{ item.dest | default(item.path) }}"
         {{ '' if loop.last else ',' }}
