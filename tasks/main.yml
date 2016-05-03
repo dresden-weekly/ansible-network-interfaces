@@ -7,6 +7,7 @@
     cache_valid_time: 86400
   with_items:
   - vlan
+  - ifenslave
 
 - include: all_interfaces.yml
   when: network_interfaces
