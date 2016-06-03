@@ -21,7 +21,8 @@
   with_items: "{{network_configuration_result.results | default([])}}"
 
 - name: network restart interface command
-  include: 'exec_restart_command.yml'
+  shell: >
+    {{ network_interface_restart_commands[ network_restart_method ] }}
   vars:
     device: "{{ item.item.0 }}"
     configs: "{{ item.item.1 }}"
