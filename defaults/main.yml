@@ -37,6 +37,9 @@ network_interfaces:
   #broadcast: 192.168.1.255
   #gateway: 192.168.1.1
 
+  # transport
+  #mtu: 9000 # give a non-default mtu
+
   # optional dns settings
   #nameservers: ['8.8.8.8']
   #dns_search: "domain.net" # appended dns search string
