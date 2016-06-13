@@ -103,6 +103,7 @@ Changelog
 
 * [✓] support `xmit_hash_policy` for bond (thanks @benner)
 * [✓] bugfix `ifenslave` should triggers vlan package install (thanks @linuxsimba)
+* [✓] support for custom `mtu` settings (thanks @benner)
 * [ ] open for your ideas, fixes and pull requests
 
 **1.0** (Ansible 2 release) 2016-03-30
