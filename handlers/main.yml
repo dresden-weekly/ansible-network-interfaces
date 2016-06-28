@@ -1,6 +1,6 @@
 ---
 - name: network all interfaces changed
-  become: {{ become }}
+  become: "{{ become }}"
   service:
     name: "{{ network_service }}"
     state: restarted
@@ -10,7 +10,7 @@
 - name: network restart interface service
 # schema: network_configuration_result.results
 #   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
-  become: {{ become }}
+  become: "{{ become }}"
   service:
     name: "{{ network_service }}"
     state: restarted
@@ -23,7 +23,7 @@
   with_items: "{{network_configuration_result.results | default([])}}"
 
 - name: network restart interface command
-  become: {{ become }}
+  become: "{{ become }}"
   shell: >
     {{ network_interface_restart_commands[ network_restart_method ] }}
   vars:
