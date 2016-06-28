@@ -1,4 +1,9 @@
 ---
+# Flag whether all commands should do a privilege escalation
+#
+# If true, all command will use sudo/su
+become: true
+
 # Flag whether all network devices are controlled by this role
 #
 # If true, all additional scripts are deleted

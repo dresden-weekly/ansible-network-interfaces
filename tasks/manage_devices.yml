@@ -1,4 +1,5 @@
 - name: list existing files
+  become: {{ become }}
   command: "find {{ network_interface_path }} -type f"
   changed_when: no
   when: network_interfaces
@@ -6,6 +7,7 @@
 
 # depending on change the result stores dest or path
 - name: configured files
+  become: {{ become }}
   set_fact:
     network_configured_files: >-
       [{% for item in network_configuration_result.results | default([]) -%}
@@ -14,6 +16,7 @@
       {%- endfor %}]
 
 - name: remove configurations
+  become: {{ become }}
   file:
     dest: "{{ item }}"
     state: absent

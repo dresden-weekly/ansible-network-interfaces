@@ -1,4 +1,5 @@
 ---
 - name: network restart interface command
+  become: {{ become }}
   shell: >
     {{ network_interface_restart_commands[ network_restart_method ] }}
