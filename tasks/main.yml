@@ -8,6 +8,7 @@
   with_items:
   - vlan
   - ifenslave
+  - bridge-utils
 
 - include: all_interfaces.yml
   when: network_interfaces
