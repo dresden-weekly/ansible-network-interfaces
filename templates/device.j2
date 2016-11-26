@@ -67,7 +67,7 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 
   # vlan
 {%     for key in vlan_keys %}
-{%       if key in config.vlan -%}
+{%       if key in config.vlan %}
   vlan-{{ key }} {{ config.vlan[key] }}
 {%       endif %}
 {%     endfor %}
