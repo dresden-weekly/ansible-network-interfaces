@@ -23,9 +23,6 @@
 - name: network restart interface command
   shell: >
     {{ network_interface_restart_commands[ network_restart_method ] }}
-  vars:
-    device: "{{ item.item.0 }}"
-    configs: "{{ item.item.1 }}"
   when: >
     (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and (network_restart_method in network_interface_restart_commands)

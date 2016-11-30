@@ -9,4 +9,4 @@ network_interface_states_path: "/run/network/ifstate"
 device: '' # <- will be the device to restart
 configs: [] # <- contains all configurations for this device
 network_interface_restart_commands:
-  interface: "ifdown {{ device }}; ifup {{ device }}"
+  interface: "ifdown {{ item.item.0 }}; ifup {{ item.item.0 }}"
