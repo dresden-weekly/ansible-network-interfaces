@@ -5,6 +5,7 @@
     state: present
     update_cache: yes
     cache_valid_time: 86400
+  when: network_interfaces
   with_items:
   - vlan
   - ifenslave
@@ -18,11 +19,13 @@
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
   with_items:
-  - "{{network_interfaces | default([]) | groupby('device') }}"
+  - "{{ network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
   notify:
   - network restart interface service
   - network restart interface command
 
 - include: manage_devices.yml
-  when: network_manage_devices
+  when:
+  - network_manage_devices
+  - network_interfaces
