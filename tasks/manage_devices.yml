@@ -1,7 +1,6 @@
 - name: list existing files
   command: "find {{ network_interface_path }} -type f"
   changed_when: no
-  when: network_interfaces
   register: network_existing_files
 
 # depending on change the result stores dest or path
