@@ -1,10 +1,12 @@
 ---
 - name: create directory
+  become: "{{ become }}"
   file:
     path: "{{ network_interface_path }}"
     state: directory
 
 - name: all interfaces
+  become: "{{ become }}"
   template:
     src: all_interfaces.j2
     dest: "{{ network_all_interfaces_path }}"

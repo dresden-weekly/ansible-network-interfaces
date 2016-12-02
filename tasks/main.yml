@@ -1,5 +1,6 @@
 ---
 - name: ensure basic networking tools are installed
+  become: "{{ become }}"
   apt:
     pkg: "{{ item }}"
     state: present
@@ -15,6 +16,7 @@
   when: network_interfaces
 
 - name: configurations
+  become: "{{ become }}"
   template:
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
