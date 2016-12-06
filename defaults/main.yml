@@ -72,3 +72,9 @@ network_interfaces:
   pre-down: [] # pre-down script lines (alias for down)
   down: [] # down script lines
   post-down: [] # post-down script lines
+
+network_all_interfaces_path: "/etc/network/interfaces"
+network_interface_path: "/etc/network/interfaces.d"
+
+network_interface_restart_commands:
+  interface: "ifdown {{ item.item.0 }}; ifup {{ item.item.0 }}"

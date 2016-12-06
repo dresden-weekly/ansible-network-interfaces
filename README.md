@@ -7,7 +7,7 @@ This is an Ansible role that manages network interface configuration as it is fo
 Requirements
 ------------
 
-Ubuntu 12.04 (Precise) or Ubuntu 14.04 (Trusty)
+Ubuntu 12.04 (Precise), Ubuntu 14.04 (Trusty) or Ubuntu 16.04 (Xenial)
 
 May work with other versions, but has never been tested.
 
@@ -26,7 +26,6 @@ Example Playbook
 
   roles:
   - role: dresden-weekly.network-interfaces
-    network_manage_devices: yes
 
     network_interfaces:
     - device: eth0
