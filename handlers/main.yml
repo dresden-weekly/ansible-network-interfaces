@@ -20,6 +20,8 @@
     and item.changed
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
+  tags:
+  - skip_ansible_lint
 
 - name: network restart interface command
   shell: >
@@ -30,3 +32,5 @@
     and item.changed
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
+  tags:
+  - skip_ansible_lint
