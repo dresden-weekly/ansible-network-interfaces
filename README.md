@@ -1,6 +1,6 @@
 Ansible network interface configuration
 =======================================
-[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/list#/roles/2766)
+[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/dresden-weekly/network-interfaces/)
 
 This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers
 
