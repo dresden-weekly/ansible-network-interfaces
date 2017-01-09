@@ -10,7 +10,7 @@ allow-{{ stanza }}
 {%   endfor %}
 
 iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.method | default('dhcp', true) }}
-{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network'] %}
+{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'mtu'] %}
 {%   for key in iface_keys %}
 {%     if key in config %}
   {{ key }} {{ config[key] }}
@@ -37,8 +37,8 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%   endif -%}
 
 {# bridge settings #}
-{%   set bridge_keys = ['ports', 'stp', 'fd', 'maxwait', 'waitport'] %}
-{%-  if (config.bridge is defined) and (bridge_keys | intersect(config.bridge.keys())) -%}
+{%-  set bridge_keys = ['ports', 'stp', 'fd', 'maxwait', 'waitport'] %}
+{%   if (config.bridge is defined) and (bridge_keys | intersect(config.bridge.keys())) -%}
 
   # bridge settings
 {%     for key in bridge_keys %}
@@ -49,8 +49,8 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
 {%   endif -%}
 
 {# bond parameters #}
-{%   set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate'] %}
-{%-  if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
+{%-  set bond_keys = ['mode', 'miimon', 'master', 'slaves', 'lacp-rate', 'xmit-hash-policy'] %}
+{%   if (config.bond is defined) and (bond_keys | intersect(config.bond.keys())) -%}
 
   # bond parameters
 {%     for key in bond_keys %}
@@ -58,24 +58,24 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
   bond-{{ key }} {{ config.bond[key] }}
 {%       endif %}
 {%     endfor %}
-{%   endif %}
+{%   endif -%}
 
 
 {# vlan #}
-{%   set vlan_keys = ['raw-device'] %}
-{%-  if (config.vlan is defined) and (vlan_keys | intersect(config.vlan.keys())) -%}
+{%-  set vlan_keys = ['raw-device'] %}
+{%   if (config.vlan is defined) and (vlan_keys | intersect(config.vlan.keys())) -%}
 
   # vlan
 {%     for key in vlan_keys %}
-{%       if key in config.vlan -%}
+{%       if key in config.vlan %}
   vlan-{{ key }} {{ config.vlan[key] }}
 {%       endif %}
 {%     endfor %}
-{%   endif %}
+{%   endif -%}
 
 {# hook scripts #}
-{%   set hook_keys = ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] %}
-{%-  if hook_keys | intersect(config.keys()) %}
+{%-  set hook_keys = ['pre-up', 'up', 'post-up', 'pre-down', 'down', 'post-down'] %}
+{%   if hook_keys | intersect(config.keys()) %}
 
   # hook scripts
 {%     for key in hook_keys %}

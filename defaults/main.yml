@@ -37,6 +37,9 @@ network_interfaces:
   #broadcast: 192.168.1.255
   #gateway: 192.168.1.1
 
+  # transport
+  #mtu: 9000 # give a non-default mtu
+
   # optional dns settings
   #nameservers: ['8.8.8.8']
   #dns_search: "domain.net" # appended dns search string
@@ -69,3 +72,9 @@ network_interfaces:
   pre-down: [] # pre-down script lines (alias for down)
   down: [] # down script lines
   post-down: [] # post-down script lines
+
+network_all_interfaces_path: "/etc/network/interfaces"
+network_interface_path: "/etc/network/interfaces.d"
+
+network_interface_restart_commands:
+  interface: "ifdown {{ item.item.0 }}; ifup {{ item.item.0 }}"

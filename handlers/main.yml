@@ -1,4 +1,5 @@
 ---
+
 - name: network all interfaces changed
   service:
     name: "{{ network_service }}"
@@ -18,16 +19,18 @@
     and ('service' == network_restart_method)
     and item.changed
     and item.item.1.0.auto | default(true)
-  with_items: "{{network_configuration_result.results | default([])}}"
+  with_items: "{{ network_configuration_result.results | default([]) }}"
+  tags:
+  - skip_ansible_lint
 
 - name: network restart interface command
-  include: 'exec_restart_command.yml'
-  vars:
-    device: "{{ item.item.0 }}"
-    configs: "{{ item.item.1 }}"
+  shell: >
+    {{ network_interface_restart_commands[ network_restart_method ] }}
   when: >
     (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and (network_restart_method in network_interface_restart_commands)
     and item.changed
     and item.item.1.0.auto | default(true)
-  with_items: "{{network_configuration_result.results | default([])}}"
+  with_items: "{{ network_configuration_result.results | default([]) }}"
+  tags:
+  - skip_ansible_lint

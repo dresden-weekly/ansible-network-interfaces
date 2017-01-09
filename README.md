@@ -1,13 +1,13 @@
 Ansible network interface configuration
 =======================================
-[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/list#/roles/2766)
+[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/dresden-weekly/network-interfaces/)
 
 This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers
 
 Requirements
 ------------
 
-Ubuntu 12.04 (Precise) or Ubuntu 14.04 (Trusty)
+Ubuntu 12.04 (Precise), Ubuntu 14.04 (Trusty) or Ubuntu 16.04 (Xenial)
 
 May work with other versions, but has never been tested.
 
@@ -26,7 +26,6 @@ Example Playbook
 
   roles:
   - role: dresden-weekly.network-interfaces
-    network_manage_devices: yes
 
     network_interfaces:
     - device: eth0
@@ -38,6 +37,7 @@ Example Playbook
       network: 192.168.1.0
       netmask: 193.168.1.255
       gateway: 192.168.1.1
+      mtu: 9000
       nameservers:
       - 8.8.8.8
       - 8.8.4.4
@@ -69,6 +69,14 @@ Example Playbook
       bond:
         master: bond0
 
+    - device: eth3
+      description: Second bonding device
+      auto: true
+      family: inet
+      method: manual
+      bond:
+        master: bond0
+
     - device: bond0
       description: This bonding device only has one interface
       allow:
@@ -76,9 +84,10 @@ Example Playbook
       family: inet
       method: static
       bond:
-        mode: active-backup
+        mode: 802.3ad
+        xmit-hash-policy: layer3+4
         miimon: 100
-        slaves: eth2
+        slaves: eth2 eth3
       address: 192.160.50.1
       netmask: 255.255.255.0
       dns_search: "localdomain"
@@ -91,9 +100,12 @@ Changelog
 
 **1.1** (*TODO*)
 
+* [✓] support `xmit_hash_policy` for bond (thanks @benner)
+* [✓] bugfix `ifenslave` should triggers vlan package install (thanks @linuxsimba)
+* [✓] support for custom `mtu` settings (thanks @benner)
 * [ ] open for your ideas, fixes and pull requests
 
-**1.0** (Ansible 2 release) 30.03.2016
+**1.0** (Ansible 2 release) 2016-03-30
 
 * [✓] compatible with Ansible 2.x
 * [✓] support all hook aliases
@@ -102,7 +114,7 @@ Changelog
 * [✓] improved support for bonding
 * [✓] one config file per device
 
-**0.1** (first release) 01.02.2015
+**0.1** (first release) 2015-02-01
 
 * [✓] ipv6 & ipv4 support
 * [✓] support for multiple network devices
