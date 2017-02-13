@@ -1,2 +1,4 @@
 ---
 network_service: networking
+
+network_restart_method: service

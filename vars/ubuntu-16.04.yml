@@ -1,6 +1,6 @@
 ---
-network_service: "networking.service"
+network_service: networking.service
 
 # Don't use the service restart for individual interfaces as
 # `systemctl restart networking.service` does not take INTERFACE args
-network_restart_method: "interface"
+network_restart_method: interface
