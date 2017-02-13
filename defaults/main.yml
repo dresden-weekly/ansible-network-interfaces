@@ -78,3 +78,7 @@ network_interface_path: "/etc/network/interfaces.d"
 
 network_interface_restart_commands:
   interface: "ifdown {{ item.item.0 }}; ifup {{ item.item.0 }}"
+
+bridge_present: "{{ network_interfaces | selectattr('bridge', 'defined') | list | length }}"
+vlan_present: "{{ network_interfaces | selectattr('vlan', 'defined') | list | length }}"
+bonding_present: "{{ network_interfaces | selectattr('bond', 'defined') | list | length }}"

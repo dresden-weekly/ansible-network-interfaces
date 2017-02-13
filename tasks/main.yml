@@ -11,17 +11,46 @@
   tags:
   - always
 
+- name: define bridge_packages if needed
+  set_fact:
+    bridge_packages:
+      - bridge-utils
+  when: bridge_present | int > 0
+
+- name: define bond_packages if needed
+  set_fact:
+    bond_packages:
+      - ifenslave
+    bond_module: bonding
+  when: bonding_present | int > 0
+
+- name: define vlan_packages if needed
+  set_fact:
+    vlan_packages:
+      - vlan
+    vlan_module: 8021q
+  when: vlan_present | int > 0
+
+- name: add required module to /etc/modules
+  lineinfile:
+    dest: /etc/modules
+    regexp: '^{{ item }}'
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - "{{ vlan_module | default('') }}"
+    - "{{ bond_module | default('') }}"
+
 - name: ensure basic networking tools are installed
   apt:
     pkg: "{{ item }}"
     state: present
     update_cache: yes
     cache_valid_time: 86400
-  when: network_interfaces
   with_items:
-  - vlan
-  - ifenslave
-  - bridge-utils
+    - "{{ bond_packages | default([]) }}"
+    - "{{ vlan_packages | default([]) }}"
+    - "{{ bridge_packages | default([]) }}"
 
 - include: all_interfaces.yml
   when: network_interfaces
