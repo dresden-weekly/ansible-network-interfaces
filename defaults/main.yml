@@ -9,14 +9,10 @@ network_manage_devices: yes
 # This is only triggered, when the all interface file was changed
 network_allow_service_restart: yes
 
-# How should changed interfaces be treated?
+# Allow network interface restart
 #
-# Options:
-#   service - restart the network service for the interface
-#   interface - down & up the interface
-#   nothing - do nothing
-#   * - undefined behavior
-network_restart_method: service
+# This will enable/disable network interface restart
+network_allow_interface_restart: yes
 
 # List of all network interface configurations
 #
