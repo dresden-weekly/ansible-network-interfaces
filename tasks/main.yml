@@ -37,16 +37,16 @@
     line: "{{ item }}"
     state: present
   with_items:
-    - "{{ vlan_module | default('') }}"
-    - "{{ bond_module | default('') }}"
+    - "{{ vlan_module | default([]) }}"
+    - "{{ bond_module | default([]) }}"
 
 - name: load required modules
   modprobe:
     name: "{{ item }}"
     state: present
   with_items:
-    - "{{ vlan_module | default('') }}"
-    - "{{ bond_module | default('') }}"
+    - "{{ vlan_module | default([]) }}"
+    - "{{ bond_module | default([]) }}"
 
 - name: ensure basic networking tools are installed
   apt:
