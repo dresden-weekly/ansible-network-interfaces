@@ -34,8 +34,7 @@
 - name: add required module to /etc/modules
   lineinfile:
     dest: /etc/modules
-    regexp: '^{{ item }}'
-    line: '{{ item }}'
+    line: "{{ item }}"
     state: present
   with_items:
     - "{{ vlan_module | default('') }}"
