@@ -40,6 +40,9 @@ network_interfaces:
   # transport
   #mtu: 9000 # give a non-default mtu
 
+  # ifmetric
+  #metric: 10
+
   # optional dns settings
   #nameservers: ['8.8.8.8']
   #dns_search: "domain.net" # appended dns search string

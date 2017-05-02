@@ -21,6 +21,7 @@
         nameservers:
         - 8.8.8.8
         - 8.8.4.4
+        metric: 10
     eth1_config: "{{ lookup('file', '/etc/network/interfaces.d/device-eth1') }}"
 
   roles:
@@ -58,5 +59,6 @@
       - "  netmask 193.168.2.255"
       - "  network 192.168.2.0"
       - "  mtu 9000"
+      - "  metric 10"
       tags:
       - skip_ansible_lint

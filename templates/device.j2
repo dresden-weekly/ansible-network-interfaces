@@ -10,7 +10,7 @@ allow-{{ stanza }}
 {%   endfor %}
 
 iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.method | default('dhcp', true) }}
-{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'mtu'] %}
+{%   set iface_keys = ['description', 'address', 'broadcast', 'gateway', 'netmask', 'network', 'mtu', 'metric'] %}
 {%   for key in iface_keys %}
 {%     if key in config %}
   {{ key }} {{ config[key] }}

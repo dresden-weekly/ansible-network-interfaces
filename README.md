@@ -38,6 +38,7 @@ Example Playbook
       netmask: 193.168.1.255
       gateway: 192.168.1.1
       mtu: 9000
+      metric: 1
       nameservers:
       - 8.8.8.8
       - 8.8.4.4
