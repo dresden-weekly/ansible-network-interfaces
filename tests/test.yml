@@ -48,11 +48,15 @@
 
     - assert:
         that:
-        - eth1_config | search("\nauto eth1\n")
-        - eth1_config | search("\niface eth1 inet static\n")
+        - eth1_config | search("\n{{ item }}\n")
         msg: "device-eth1 configuration does not meet expectations"
+      with_items:
+      - "auto eth1"
+      - "iface eth1 inet static"
+      - "  address 192.168.2.100"
+      - "  gateway 192.168.2.1"
+      - "  netmask 193.168.2.255"
+      - "  network 192.168.2.0"
+      - "  mtu 9000"
       tags:
       - skip_ansible_lint
-
-
-
