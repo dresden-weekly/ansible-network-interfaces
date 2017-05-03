@@ -95,6 +95,15 @@ Example Playbook
       - ip route add 172.16.0.0/24 via 192.168.50.254 dev bond0
 ```
 
+Testing
+-------
+
+Install Docker, then
+
+```
+make
+```
+
 Changelog
 ---------
 
