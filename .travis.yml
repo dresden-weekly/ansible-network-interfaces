@@ -1,18 +1,9 @@
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: linux
-      dist: precise
-      sudo: required
-
 sudo: required
 
 language: python
 
 services:
   - docker
-
 
 script:
   - make
