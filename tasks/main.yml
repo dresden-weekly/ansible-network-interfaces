@@ -22,6 +22,7 @@
   - vlan
   - ifenslave
   - bridge-utils
+  - ifmetric
 
 - include: all_interfaces.yml
   when: network_interfaces
