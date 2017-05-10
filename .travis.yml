@@ -1,22 +1,9 @@
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-    - os: linux
-      dist: precise
-      sudo: required
-
 sudo: required
 
 language: python
 
-install:
-  - "pip install ansible==2.1.1.0 ansible-lint==3.4.7"
+services:
+  - docker
+
 script:
-  - cd tests
-  - echo "Checking Ansible syntax"
-  - ansible-playbook --inventory=localhost, --connection=local test.yml --syntax-check
-  - echo "Running Ansible-Lint"
-  - ansible-lint test.yml
-  - echo "Running the test.yml playbook"
-  - ansible-playbook --inventory=localhost, --connection=local test.yml -vvv
+  - make

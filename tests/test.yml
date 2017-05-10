@@ -25,7 +25,7 @@
     eth1_config: "{{ lookup('file', '/etc/network/interfaces.d/device-eth1') }}"
 
   roles:
-    - { role: ../../ansible-network-interfaces }
+    - { role: /ansible-network-interfaces }
 
   post_tasks:
     - name: Show devices
