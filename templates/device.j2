@@ -16,6 +16,11 @@ iface {{ config.device }} {{ config.family | default('inet', true) }} {{ config.
   {{ key }} {{ config[key] }}
 {%     endif %}
 {%   endfor -%}
+{%   if config['additional_options'] is defined %}
+{%     for key, value in config['additional_options'].items() | sort %}
+  {{ key }} {{ value }}
+{%     endfor %}
+{%   endif %}
 
 {# nameservers #}
 {%-  if (config.nameservers is defined) and (0 < config.nameservers | length) %}

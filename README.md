@@ -50,6 +50,16 @@ Example Playbook
       auto: true
       family: inet
       method: dhcp
+      
+    - device: wlan0
+      description: sample wlan interface using wpa_supplicant (note: does not install wpasupplicant)
+      auto: true
+      family: inet
+      method: dhcp
+      additional_options:
+        wpa-driver: nl80211
+        wpa-ssid: my-wifi
+        wpa-psk: password123
 
     - device: vlan123
       description: sample vlan interface using eth0 and tagged for VLAN 123.
