@@ -1,20 +1,16 @@
-Ansible network interface configuration
-=======================================
-[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-dresden--weekly.network--interfaces-blue.svg)](https://galaxy.ansible.com/dresden-weekly/network-interfaces/)
+# Ansible osism.network-interfaces
 
-This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers
+[![Build Status](https://travis-ci.org/osism/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/osism/ansible-network-interfaces)
+[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-osism.network-interfaces-blue.svg)](https://galaxy.ansible.com/osism/network-interfaces/)
+![Ansible 2.2](https://img.shields.io/badge/Ansible-2.2-green.png?style=flat)
+![Ansible 2.3](https://img.shields.io/badge/Ansible-2.3-green.png?style=flat)
 
-Requirements
-------------
+Supported Linux distributions
+-----------------------------
 
-Ubuntu 12.04 (Precise), Ubuntu 14.04 (Trusty) or Ubuntu 16.04 (Xenial)
-
-May work with other versions, but has never been tested.
-
-Dependencies
-------------
-
-none
+* Ubuntu 12.04 (Precise)
+* Ubuntu 14.04 (Trusty)
+* Ubuntu 16.04 (Xenial)
 
 Example Playbook
 ----------------
@@ -160,3 +156,10 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Author information
+------------------
+
+This role is provided by [Betacloud Solutions GmbH](https://betacloud-solutions.de).
+
+Based on https://github.com/dresden-weekly/ansible-network-interfaces.
