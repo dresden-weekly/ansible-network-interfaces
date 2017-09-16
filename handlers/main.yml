@@ -1,21 +1,22 @@
 ---
-
-- name: network all interfaces changed
+- name: Interfaces file changed
   service:
     name: "{{ network_service }}"
     state: restarted
   when: network_allow_service_restart
   register: network_service_restart_result
 
-- name: network restart interface service
-# schema: network_configuration_result.results
-#   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
+# NOTE: network_configuration_result.results
+#       = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
+
+- name: Restart network service
   service:
     name: "{{ network_service }}"
     state: restarted
     arguments: "INTERFACE={{ item.item.0 }}"
   when: >
-    (network_service_restart_result is undefined or not network_service_restart_result.changed)
+    network_allow_service_restart
+    and (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and ('service' == network_restart_method)
     and item.changed
     and item.item.1.0.auto | default(true)
@@ -23,11 +24,12 @@
   tags:
   - skip_ansible_lint
 
-- name: network restart interface command
+- name: Restart network command
   shell: >
     {{ network_interface_restart_commands[ network_restart_method ] }}
   when: >
-    (network_service_restart_result is undefined or not network_service_restart_result.changed)
+    network_allow_service_restart
+    and (network_service_restart_result is undefined or not network_service_restart_result.changed)
     and (network_restart_method in network_interface_restart_commands)
     and item.changed
     and item.item.1.0.auto | default(true)

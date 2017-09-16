@@ -1,0 +1,76 @@
+---
+- name: Install python2
+  hosts: all
+  gather_facts: no
+
+  tasks:
+  - name: Install python2
+    raw: test -e /usr/bin/python || (test -e /usr/bin/apt && (apt -y update && apt install -y python-minimal))
+    register: result
+    changed_when: result.rc != 0
+    become: true
+
+- name: Playbook for role testing
+  hosts: all
+  connection: paramiko
+  become: true
+
+  vars:
+    network_allow_service_restart: no
+    network_interfaces:
+      - device: enp0s3
+        auto: true
+        family: inet
+        method: static
+        address: 10.0.2.15
+        network: 10.0.2.0
+        netmask: 255.255.255.0
+        gateway: 10.0.2.2
+        mtu: 1500
+        nameservers:
+        - 8.8.8.8
+        - 8.8.4.4
+        metric: 10
+
+  roles:
+    - role: ../../ansible-network-interfaces
+
+  post_tasks:
+    - name: Show devices
+      debug:
+        var: network_configuration_result
+
+    - name: Check for /etc/network/interfaces.d/device-enp0s3
+      stat:
+        path: /etc/network/interfaces.d/device-enp0s3
+      register: enp0s3_stat
+
+    - assert:
+        that: enp0s3_stat.stat.exists
+        msg: "device-enp0s3 interface config was not created"
+      tags:
+      - skip_ansible_lint
+
+    - slurp:
+        src: /etc/network/interfaces.d/device-enp0s3
+      register: enp0s3_config
+
+    - name: Show the enp0s3 configuration
+      debug:
+        var: enp0s3_config
+
+    - assert:
+        that:
+        - enp0s3_config.content | b64decode | search("\n{{ item }}\n")
+        msg: "device-enp0s3 configuration does not meet expectations"
+      with_items:
+      - "auto enp0s3"
+      - "iface enp0s3 inet static"
+      - "  address 10.0.2.15"
+      - "  gateway 10.0.2.2"
+      - "  netmask 255.255.255.0"
+      - "  network 10.0.2.0"
+      - "  mtu 1500"
+      - "  metric 10"
+      tags:
+      - skip_ansible_lint

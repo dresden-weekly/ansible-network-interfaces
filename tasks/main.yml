@@ -11,7 +11,7 @@
   tags:
   - always
 
-- name: ensure basic networking tools are installed
+- name: Ensure basic networking tools are installed
   apt:
     pkg: "{{ item }}"
     state: present
@@ -20,10 +20,23 @@
   when: network_interfaces
   with_items: "{{ network_interface_required_packages }}"
 
-- include: all_interfaces.yml
+- name: Create required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ network_interface_path }}"
   when: network_interfaces
 
-- name: configurations
+- name: Copy interfaces file
+  template:
+    src: all_interfaces.j2
+    dest: "{{ network_all_interfaces_path }}"
+  notify:
+  - Interfaces file changed
+  when: network_interfaces
+
+- name: Copy device configuration files
   template:
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
@@ -32,10 +45,11 @@
   - "{{ network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
   notify:
-  - network restart interface service
-  - network restart interface command
+  - Restart network service
+  - Restart network command
 
-- include: manage_devices.yml
+- name: Include cleanup tasks
+  include: cleanup.yml
   when:
   - network_manage_devices
   - network_interfaces

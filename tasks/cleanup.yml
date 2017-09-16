@@ -1,11 +1,13 @@
-- name: list existing files
+---
+- name: List existing configuration files
   command: "find {{ network_interface_path }} -type f"
   changed_when: no
   register: network_existing_files
 
-# depending on change the result stores dest or path
-# check mode doesn't store any of those so use module args
-- name: configured files
+# NOTE: depending on change the result stores dest or path
+#       check mode doesn't store any of those so use module args
+
+- name: Set network_configured_files fact
   set_fact:
     network_configured_files: >-
       [{% for item in network_configuration_result.results | default([]) -%}
@@ -13,7 +15,7 @@
         {{ '' if loop.last else ',' }}
       {%- endfor %}]
 
-- name: remove configurations
+- name: Remove unused configuration files
   file:
     dest: "{{ item }}"
     state: absent
