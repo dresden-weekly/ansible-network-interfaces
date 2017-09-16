@@ -33,7 +33,7 @@
     src: all_interfaces.j2
     dest: "{{ network_all_interfaces_path }}"
   notify:
-  - Interfaces file changed
+    - Interfaces file changed
   when: network_interfaces
 
 - name: Copy device configuration files
@@ -42,14 +42,14 @@
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
     mode: "{{ network_interface_permissions }}"
   with_items:
-  - "{{ network_interfaces | default([]) | groupby('device') }}"
+    - "{{ network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
   notify:
-  - Restart network service
-  - Restart network command
+    - Restart network service
+    - Restart network command
 
 - name: Include cleanup tasks
   include: cleanup.yml
   when:
-  - network_manage_devices
-  - network_interfaces
+    - network_manage_devices
+    - network_interfaces

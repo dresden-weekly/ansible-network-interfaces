@@ -22,7 +22,7 @@
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint
 
 - name: Restart network command
   shell: >
@@ -35,4 +35,4 @@
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint

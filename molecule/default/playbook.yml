@@ -1,15 +1,4 @@
 ---
-- name: Install python2
-  hosts: all
-  gather_facts: no
-
-  tasks:
-  - name: Install python2
-    raw: test -e /usr/bin/python || (test -e /usr/bin/apt && (apt -y update && apt install -y python-minimal))
-    register: result
-    changed_when: result.rc != 0
-    become: true
-
 - name: Playbook for role testing
   hosts: all
   connection: paramiko
@@ -33,7 +22,7 @@
         metric: 10
 
   roles:
-    - role: ../../ansible-network-interfaces
+    - role: ansible-network-interfaces
 
   post_tasks:
     - name: Show devices
@@ -45,13 +34,15 @@
         path: /etc/network/interfaces.d/device-enp0s3
       register: enp0s3_stat
 
-    - assert:
+    - name: Assert that /etc/network/interfaces.d/device-enp0s3 was created
+      assert:
         that: enp0s3_stat.stat.exists
         msg: "device-enp0s3 interface config was not created"
       tags:
         - skip_ansible_lint
 
-    - slurp:
+    - name: Slurp content of /etc/network/interfaces.d/device-enp0s3
+      slurp:
         src: /etc/network/interfaces.d/device-enp0s3
       register: enp0s3_config
 
@@ -59,7 +50,8 @@
       debug:
         var: enp0s3_config
 
-    - assert:
+    - name: Assert contents of /etc/network/interfaces.d/device-enp0s3
+      assert:
         that:
           - enp0s3_config.content | b64decode | search("\n{{ item }}\n")
         msg: "device-enp0s3 configuration does not meet expectations"
