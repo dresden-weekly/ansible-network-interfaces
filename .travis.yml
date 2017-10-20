@@ -7,3 +7,8 @@ install:
   - pip install -r test-requirements.txt
 script:
   - tox
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#osism"
+    use_notice: true
