@@ -1,0 +1,20 @@
+---
+- name: Prepare instance for use with Ansible
+  hosts: all
+  gather_facts: false
+
+  tasks:
+  - name: A short pause, in order to be sure the instance is ready
+    pause:
+      seconds: 10
+
+  - name: Install required packages
+    raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    become: true
+    changed_when: false
+
+- name: Playbook for role preparations
+  hosts: all
+
+  roles: []
+  tasks: []

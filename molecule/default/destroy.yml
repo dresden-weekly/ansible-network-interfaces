@@ -2,15 +2,50 @@
 - name: Destroy
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+    keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+
   tasks:
     - name: Destroy molecule instance(s)
-      docker_container:
-        name: "{{ item.name }}"
+      os_server:
+        cloud: molecule
+        name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
         state: absent
-        force_kill: "{{ item.force_kill | default(True) }}"
+      register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) deletion to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: os_jobs
+      until: os_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    - name: Delete remote keypair
+      os_keypair:
+        cloud: molecule
+        name: "{{ keypair_name }}"
+        state: absent
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

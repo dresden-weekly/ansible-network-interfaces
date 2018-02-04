@@ -2,46 +2,204 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
-    molecule_scenario_directory: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+
+    ssh_user: ubuntu
+    ssh_port: 22
+
+    security_group_name: molecule
+    security_group_description: "Security group for testing molecule"
+    security_group_rules:
+      - proto: tcp
+        port: "{{ ssh_port }}"
+        cidr: '0.0.0.0/0'
+      - proto: icmp
+        port: -1
+        cidr: '0.0.0.0/0'
+      - ethertype: IPv4
+        group: "{{ security_group.id }}"
+      - ethertype: IPv6
+        group: "{{ security_group.id }}"
+
+    neutron:
+      networks:
+        - name: molecule
+          external: false
+          shared: false
+      subnets:
+        - name: molecule
+          network_name: molecule
+          ip_version: 4
+          cidr: 192.168.1.0/24
+          enable_dhcp: true
+          dns_nameservers:
+            - 8.8.8.8
+            - 8.8.4.4
+      routers:
+        - name: molecule
+          network_name: public
+          interfaces:
+            - molecule
+
+    keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+
+    nova:
+      image: "Ubuntu 16.04 (Xenial Xerus)"
+      flavor: 1C-1GB-10GB
+
   tasks:
-    - name: Create Dockerfiles from image names
-      template:
-        src: "{{ molecule_scenario_directory }}/Dockerfile.j2"
-        dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
-      with_items: "{{ molecule_yml.platforms }}"
-      register: platforms
+    - name: Create security group
+      os_security_group:
+        cloud: molecule
+        name: "{{ security_group_name }}"
+        description: "{{ security_group_description }}"
+      register: security_group
 
-    - name: Discover local Docker images
-      docker_image_facts:
-        name: "molecule_local/{{ item.item.name }}"
-      with_items: "{{ platforms.results }}"
-      register: docker_images
+    - name: Create security group rules
+      os_security_group_rule:
+        cloud: molecule
+        security_group: "{{ security_group_name }}"
+        protocol: "{{ item.proto | default(omit) }}"
+        port_range_min: "{{ item.port | default(omit) }}"
+        port_range_max: "{{ item.port | default(omit) }}"
+        remote_ip_prefix: "{{ item.cidr | default(omit) }}"
+        remote_group: "{{ item.group | default(omit) }}"
+        ethertype: "{{ item.ethertype | default(omit) }}"
+      with_items: "{{ security_group_rules }}"
 
-    - name: Build an Ansible compatible image
-      docker_image:
-        path: "{{ molecule_ephemeral_directory }}"
-        name: "molecule_local/{{ item.item.image }}"
-        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
-        force: "{{ item.item.force | default(True) }}"
-      with_items: "{{ platforms.results }}"
-      when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
+    - name: Test for presence of local keypair
+      stat:
+        path: "{{ keypair_path }}"
+      register: keypair_local
+
+    - name: Delete remote keypair
+      os_keypair:
+        cloud: molecule
+        name: "{{ keypair_name }}"
+        state: absent
+      when: not keypair_local.stat.exists
+
+    - name: Create keypair
+      os_keypair:
+        cloud: molecule
+        name: "{{ keypair_name }}"
+      register: keypair
+
+    - name: Persist the keypair
+      copy:
+        dest: "{{ keypair_path }}"
+        content: "{{ keypair.key.private_key }}"
+        mode: 0600
+      when: keypair.changed
+
+    - name: Create networks
+      os_network:
+        cloud: molecule
+        name: "{{ item.name }}"
+        provider_network_type: "{{ item.network_type | default(omit) }}"
+        shared: "{{ item.shared | default(omit) }}"
+        external: "{{ item.external | default(omit) }}"
+        provider_segmentation_id: "{{ item.segmentation_id | default(omit)}}"
+        provider_physical_network: "{{ item.provider_physical_network | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+      with_items: "{{ neutron.networks }}"
+      run_once: true
+
+    - name: Gather facts about network for use with instance creation
+      os_networks_facts:
+        cloud: molecule
+        name: "{{ neutron.networks[0].name }}"
+
+    - name: Create subnets
+      os_subnet:
+        cloud: molecule
+        name: "{{ item.name }}"
+        network_name: "{{ item.network_name }}"
+        cidr: "{{ item.cidr }}"
+        enable_dhcp: "{{ item.enable_dhcp }}"
+        gateway_ip: "{{ item.gateway_ip | default(omit) }}"
+        ip_version: "{{ item.ip_version | default(omit) }}"
+        ipv6_ra_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
+        ipv6_address_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
+        dns_nameservers: "{{ item.dns_nameservers | default(omit) }}"
+        allocation_pool_start: "{{ item.pool_start | default(omit) }}"
+        allocation_pool_end: "{{ item.pool_end | default(omit) }}"
+        validate_certs: "{{ validate_certs | default(omit) }}"
+      with_items: "{{ neutron.subnets }}"
+      run_once: true
+
+    - name: Create routers
+      os_router:
+        cloud: molecule
+        name: "{{ item.name }}"
+        network: "{{ item.network_name }}"
+        interfaces: "{{ item.interfaces }}"
+        external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
+      with_items: "{{ neutron.routers }}"
+      run_once: true
 
     - name: Create molecule instance(s)
-      docker_container:
-        name: "{{ item.name }}"
-        hostname: "{{ item.name }}"
-        image: "molecule_local/{{ item.image }}"
-        state: started
-        recreate: False
-        log_driver: syslog
-        command: "{{ item.command | default('sleep infinity') }}"
-        privileged: "{{ item.privileged | default(omit) }}"
-        volumes: "{{ item.volumes | default(omit) }}"
-        capabilities: "{{ item.capabilities | default(omit) }}"
+      os_server:
+        cloud: molecule
+        name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+        image: "{{ nova.image }}"
+        flavor: "{{ nova.flavor }}"
+        security_groups:
+          - "{{ security_group_name }}"
+        key_name: "{{ keypair_name }}"
+        nics:
+          - net-id: "{{ openstack_networks[0]['id'] }}"
+      register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: os_jobs
+      until: os_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    # Mandatory configuration for molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.openstack.name }}",
+          'address': "{{ item.openstack.accessIPv4 }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ keypair_path }}"}
+      with_items: "{{ os_jobs.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"

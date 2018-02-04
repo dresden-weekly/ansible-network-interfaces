@@ -2,15 +2,13 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
+  name: openstack
 lint:
   name: yamllint
   options:
     config-file: molecule/default/yamllint.yml
 platforms:
-  - name: molecule-ubuntu-network-interfaces
-    image: ubuntu
-    image_version: 16.04
+  - name: molecule$TRAVIS_JOB_ID
 provisioner:
   name: ansible
   lint:
