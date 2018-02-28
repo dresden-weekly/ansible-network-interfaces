@@ -9,8 +9,12 @@ before_install:
 install:
   - pip install -r test-requirements.txt
 
+env:
+  - TOX_ENV=ansible23
+  - TOX_ENV=ansible24
+
 script:
-  - tox
+  - tox -e $TOX_ENV
 
 notifications:
   irc:
