@@ -16,6 +16,7 @@
       os_server:
         cloud: molecule
         name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+        delete_fip: yes
         state: absent
       register: server
       with_items: "{{ molecule_yml.platforms }}"
