@@ -5,55 +5,6 @@
   gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
 
-  vars:
-    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
-
-    ssh_user: ubuntu
-    ssh_port: 22
-
-    security_group_name: molecule
-    security_group_description: "Security group for testing molecule"
-    security_group_rules:
-      - proto: tcp
-        port: "{{ ssh_port }}"
-        cidr: '0.0.0.0/0'
-      - proto: icmp
-        port: -1
-        cidr: '0.0.0.0/0'
-      - ethertype: IPv4
-        group: "{{ security_group.id }}"
-      - ethertype: IPv6
-        group: "{{ security_group.id }}"
-
-    neutron:
-      networks:
-        - name: molecule
-          external: false
-          shared: false
-      subnets:
-        - name: molecule
-          network_name: molecule
-          ip_version: 4
-          cidr: 192.168.1.0/24
-          enable_dhcp: true
-          dns_nameservers:
-            - 8.8.8.8
-            - 8.8.4.4
-      routers:
-        - name: molecule
-          network_name: public
-          interfaces:
-            - molecule
-
-    keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
-
-    nova:
-      image: "Ubuntu 16.04 (Xenial Xerus)"
-      flavor: 1C-1GB-10GB
-
   tasks:
     - name: Create security group
       os_security_group:
@@ -156,6 +107,7 @@
         key_name: "{{ keypair_name }}"
         nics:
           - net-id: "{{ openstack_networks[0]['id'] }}"
+        config_drive: yes
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

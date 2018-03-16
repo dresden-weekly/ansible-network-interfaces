@@ -5,12 +5,6 @@
   gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
 
-  vars:
-    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
-    keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-
   tasks:
     - name: Destroy molecule instance(s)
       os_server:
@@ -35,6 +29,36 @@
       os_keypair:
         cloud: molecule
         name: "{{ keypair_name }}"
+        state: absent
+
+    - name: Delete routers
+      os_router:
+        cloud: molecule
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ neutron.routers }}"
+      run_once: true
+
+    - name: Delete subnets
+      os_subnet:
+        cloud: molecule
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ neutron.subnets }}"
+      run_once: true
+
+    - name: Delete networks
+      os_network:
+        cloud: molecule
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ neutron.networks }}"
+      run_once: true
+
+    - name: Delete security group
+      os_security_group:
+        cloud: molecule
+        name: "{{ security_group_name }}"
         state: absent
 
     # Mandatory configuration for Molecule to function.
