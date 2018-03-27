@@ -1,5 +1,4 @@
 .molecule
 .tox
-.vagrant
 roles
 clouds.yml
