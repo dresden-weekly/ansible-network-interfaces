@@ -1,4 +1,4 @@
-def test_dummy_file(host):
-    f = host.file("/tmp/dummy")
+def test_network_interfaces_path(host):
+    f = host.file("/etc/network/interfaces.d")
     assert f.exists
-    assert f.is_file
+    assert f.is_directory
