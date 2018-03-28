@@ -17,6 +17,7 @@ install:
 env:
   - TOX_ENV=ansible23
   - TOX_ENV=ansible24
+  - TOX_ENV=ansible25
 
 script:
   - tox -e $TOX_ENV
