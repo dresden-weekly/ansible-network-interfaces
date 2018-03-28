@@ -1,3 +1,4 @@
 molecule>=2.0
 shade
+testinfra
 tox
