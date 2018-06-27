@@ -37,8 +37,8 @@ Example Playbook
       mtu: 9000
       metric: 1
       nameservers:
-      - 8.8.8.8
-      - 8.8.4.4
+      - 9.9.9.9
+      - 149.112.112.112
       subnets:
       - 192.168.1.12/32
 

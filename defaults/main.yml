@@ -44,7 +44,7 @@ network_interfaces:
     # metric: 10
 
     # optional dns settings
-    # nameservers: ['8.8.8.8']
+    # nameservers: ['9.9.9.9']
     # dns_search: "domain.net" # appended dns search string
 
     # optional additional subnets/ips

@@ -30,8 +30,8 @@ neutron:
       cidr: 192.168.1.0/24
       enable_dhcp: true
       dns_nameservers:
-        - 8.8.8.8
-        - 8.8.4.4
+        - 9.9.9.9
+        - 149.112.112.112
   routers:
     - name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
       network_name: public
