@@ -18,29 +18,11 @@ security_group_rules:
   - ethertype: IPv4
     group: "{{ security_group.id }}"
 
-neutron:
-  networks:
-    - name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-      external: false
-      shared: false
-  subnets:
-    - name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-      network_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-      ip_version: 4
-      cidr: 192.168.1.0/24
-      enable_dhcp: true
-      dns_nameservers:
-        - 9.9.9.9
-        - 149.112.112.112
-  routers:
-    - name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-      network_name: public
-      interfaces:
-        - "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-
 keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
 keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
 nova:
-  image: "Ubuntu 16.04 (Xenial Xerus)"
-  flavor: 1C-1GB-10GB
+  flavor_name: "{{ lookup('env', 'MOLECULE_FLAVOR')|default('1C-1GB-10GB', true) }}"
+  floating_ip_pool: public
+  image_name: "{{ lookup('env', 'MOLECULE_IMAGE')|default('Ubuntu 16.04 (20180628)', true) }}"
+  network_name: molecule

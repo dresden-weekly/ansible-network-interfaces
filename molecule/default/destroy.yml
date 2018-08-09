@@ -31,30 +31,6 @@
         name: "{{ keypair_name }}"
         state: absent
 
-    - name: Delete routers
-      os_router:
-        cloud: molecule
-        name: "{{ item.name }}"
-        state: absent
-      with_items: "{{ neutron.routers }}"
-      run_once: true
-
-    - name: Delete subnets
-      os_subnet:
-        cloud: molecule
-        name: "{{ item.name }}"
-        state: absent
-      with_items: "{{ neutron.subnets }}"
-      run_once: true
-
-    - name: Delete networks
-      os_network:
-        cloud: molecule
-        name: "{{ item.name }}"
-        state: absent
-      with_items: "{{ neutron.networks }}"
-      run_once: true
-
     - name: Delete security group
       os_security_group:
         cloud: molecule

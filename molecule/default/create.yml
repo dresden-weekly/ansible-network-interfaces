@@ -50,64 +50,25 @@
         mode: 0600
       when: keypair.changed
 
-    - name: Create networks
-      os_network:
-        cloud: molecule
-        name: "{{ item.name }}"
-        provider_network_type: "{{ item.network_type | default(omit) }}"
-        shared: "{{ item.shared | default(omit) }}"
-        external: "{{ item.external | default(omit) }}"
-        provider_segmentation_id: "{{ item.segmentation_id | default(omit)}}"
-        provider_physical_network: "{{ item.provider_physical_network | default(omit) }}"
-        validate_certs: "{{ validate_certs | default(omit) }}"
-      with_items: "{{ neutron.networks }}"
-      run_once: true
-
     - name: Gather facts about network for use with instance creation
       os_networks_facts:
         cloud: molecule
-        name: "{{ neutron.networks[0].name }}"
-
-    - name: Create subnets
-      os_subnet:
-        cloud: molecule
-        name: "{{ item.name }}"
-        network_name: "{{ item.network_name }}"
-        cidr: "{{ item.cidr }}"
-        enable_dhcp: "{{ item.enable_dhcp }}"
-        gateway_ip: "{{ item.gateway_ip | default(omit) }}"
-        ip_version: "{{ item.ip_version | default(omit) }}"
-        ipv6_ra_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
-        ipv6_address_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
-        dns_nameservers: "{{ item.dns_nameservers | default(omit) }}"
-        allocation_pool_start: "{{ item.pool_start | default(omit) }}"
-        allocation_pool_end: "{{ item.pool_end | default(omit) }}"
-        validate_certs: "{{ validate_certs | default(omit) }}"
-      with_items: "{{ neutron.subnets }}"
-      run_once: true
-
-    - name: Create routers
-      os_router:
-        cloud: molecule
-        name: "{{ item.name }}"
-        network: "{{ item.network_name }}"
-        interfaces: "{{ item.interfaces }}"
-        external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
-      with_items: "{{ neutron.routers }}"
-      run_once: true
+        name: "{{ nova.network_name }}"
 
     - name: Create molecule instance(s)
       os_server:
         cloud: molecule
         name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-        image: "{{ nova.image }}"
-        flavor: "{{ nova.flavor }}"
+        image: "{{ nova.image_name }}"
+        flavor: "{{ nova.flavor_name }}"
         security_groups:
           - "{{ security_group_name }}"
         key_name: "{{ keypair_name }}"
         nics:
           - net-id: "{{ openstack_networks[0]['id'] }}"
         config_drive: yes
+        floating_ip_pools: "{{ nova.floating_ip_pool }}"
+        delete_fip: true
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
