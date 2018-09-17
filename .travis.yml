@@ -15,7 +15,6 @@ install:
   - pip install -r test-requirements.txt
 
 env:
-  - TOX_ENV=ansible23
   - TOX_ENV=ansible24
   - TOX_ENV=ansible25
 
