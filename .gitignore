@@ -1,4 +1,4 @@
 .molecule
 .tox
-roles
-clouds.yml
+molecule/default/clouds.yml
+molecule/default/roles

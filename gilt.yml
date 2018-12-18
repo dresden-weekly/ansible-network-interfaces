@@ -1,0 +1,29 @@
+---
+- git: https://github.com/osism/travis.git
+  version: master
+  files:
+    - src: molecule/*.yml
+      dst: molecule/default/
+    - src: molecule/group_vars/*.yml
+      dst: molecule/default/group_vars/
+    - src: ansible/*requirements.txt
+      dst: ./
+    - src: ansible/gilt.yml
+      dst: ./
+    - src: ansible/tox.ini
+      dst: ./
+    - src: ansible/.gitignore
+      dst: ./.gitignore
+    - src: ansible/render-template.py
+      dst: scripts/render-template.py
+    - src: ansible/main.yml
+      dst: meta/main.yml
+    - src: ansible/README.md
+      dst: ./
+    - src: ansible/.travis.yml
+      dst: ./
+      post_commands:
+        - python scripts/render-template.py README.md
+        - python scripts/render-template.py .travis.yml
+        - python scripts/render-template.py meta/main.yml
+        - python scripts/render-template.py molecule/default/prepare.yml

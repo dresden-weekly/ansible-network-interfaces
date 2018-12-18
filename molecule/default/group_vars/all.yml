@@ -6,8 +6,8 @@ molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 ssh_user: ubuntu
 ssh_port: 22
 
-security_group_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
-security_group_description: "Security group for molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+security_group_name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
+security_group_description: "Security group for molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
 security_group_rules:
   - proto: tcp
     port: "{{ ssh_port }}"
@@ -18,11 +18,12 @@ security_group_rules:
   - ethertype: IPv4
     group: "{{ security_group.id }}"
 
-keypair_name: "molecule{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}"
+keypair_name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
 keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
 nova:
   flavor_name: "{{ lookup('env', 'MOLECULE_FLAVOR')|default('1C-1GB-10GB', true) }}"
   floating_ip_pool: public
   image_name: "{{ lookup('env', 'MOLECULE_IMAGE')|default('Ubuntu 16.04 (20180628)', true) }}"
+  name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
   network_name: molecule

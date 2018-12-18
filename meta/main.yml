@@ -3,13 +3,13 @@ galaxy_info:
   author: Christian Berendt
   description: Role osism.network-interfaces
   company: Betacloud Solutions GmbH
-  license: MIT
-  min_ansible_version: 2.4
+  license: Apache License 2.0
+  min_ansible_version: 2.6
   platforms:
     - name: Ubuntu
       versions:
+        - bionic
         - xenial
-  categories:
-    - networking
+  galaxy_tags:
     - system
 dependencies: []

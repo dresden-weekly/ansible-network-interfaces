@@ -8,11 +8,15 @@ lint:
   options:
     config-file: molecule/default/yamllint.yml
 platforms:
-  - name: molecule$TRAVIS_JOB_ID
+  - name: $PLATFORM_NAME
 provisioner:
   name: ansible
   lint:
     name: ansible-lint
+  inventory:
+    group_vars:
+      all:
+        ansible_python_interpreter: /usr/bin/python3
 verifier:
   name: testinfra
 scenario:

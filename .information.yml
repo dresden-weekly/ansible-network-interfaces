@@ -1,0 +1,3 @@
+---
+ansible_role_name: network-interfaces
+travis_decrypt_key: 1568d26de99d
