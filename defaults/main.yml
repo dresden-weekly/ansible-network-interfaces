@@ -84,7 +84,8 @@ network_interface_restart_commands:
   interface: "ifdown {{ item.item.0 }}; ifup {{ item.item.0 }}"
 
 network_interface_required_packages:
-  - vlan
-  - ifenslave
   - bridge-utils
+  - ifenslave
   - ifmetric
+  - ifupdown
+  - vlan
