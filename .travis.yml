@@ -11,8 +11,14 @@ before_install:
 install:
   - pip install -r requirements.txt
 
+env:
+  - TOX_ENV=ansible26-xenial
+  - TOX_ENV=ansible26-bionic
+  - TOX_ENV=ansible27-xenial
+  - TOX_ENV=ansible27-bionic
+
 script:
-  - travis_wait 45 detox
+  - tox -e $TOX_ENV
 
 notifications:
   irc:
