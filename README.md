@@ -24,3 +24,8 @@ Author information
 ------------------
 
 This role was created by [Betacloud Solutions GmbH](https://betacloud-solutions.de).
+
+Notes
+-----
+
+This role is based on the role ``dresden-weekly.network-interfaces`` (https://github.com/dresden-weekly/ansible-network-interfaces).
