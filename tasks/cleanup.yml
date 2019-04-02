@@ -20,4 +20,4 @@
     dest: "{{ item }}"
     state: absent
   when: item not in network_configured_files
-  with_items: "{{network_existing_files.stdout_lines | default([])}}"
+  with_items: "{{ network_existing_files.stdout_lines | default([]) }}"
