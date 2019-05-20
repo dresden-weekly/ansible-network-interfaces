@@ -68,8 +68,8 @@
           - net-id: "{{ openstack_networks[0]['id'] }}"
         config_drive: yes
         delete_fip: yes
-        auto_ip: no
         timeout: 360
+        floating_ip_pools: "{{ nova.floating_ip_pool }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
@@ -78,42 +78,22 @@
     - name: Wait for instance(s) creation to complete
       async_status:
         jid: "{{ item.ansible_job_id }}"
-      register: os_jobs
-      until: os_jobs.finished
+      register: os_jobs_server
+      until: os_jobs_server.finished
       retries: 300
       with_items: "{{ server.results }}"
-
-    - name: Assing public address(es)
-      os_floating_ip:
-        cloud: molecule
-        server: "{{ nova.name }}"
-        network: "{{ nova.floating_ip_pool }}"
-        wait: yes
-        timeout: 360
-      register: floating
-      with_items: "{{ molecule_yml.platforms }}"
-      async: 7200
-      poll: 0
-
-    - name: Wait for public address(es) assignment to complete
-      async_status:
-        jid: "{{ item.ansible_job_id }}"
-      register: os_jobs
-      until: os_jobs.finished
-      retries: 300
-      with_items: "{{ floating.results }}"
 
     # Mandatory configuration for molecule to function.
 
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item._ansible_item_label._ansible_item_label.name }}",
-          'address': "{{ item.floating_ip.floating_ip_address }}",
+          'instance': "{{ item.openstack.name }}",
+          'address': "{{ item.openstack.accessIPv4 }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}"}
-      with_items: "{{ os_jobs.results }}"
+      with_items: "{{ os_jobs_server.results }}"
       register: instance_config_dict
       when: server.changed | bool
 
@@ -124,8 +104,6 @@
 
     - name: Dump instance config
       copy:
-        # NOTE(retr0h): Workaround for Ansible 2.2.
-        #               https://github.com/ansible/ansible/issues/20885
         content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
