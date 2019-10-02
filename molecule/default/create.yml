@@ -58,7 +58,7 @@
     - name: Create molecule instance(s)
       os_server:
         cloud: molecule
-        name: "{{ nova.name }}"
+        name: "{{ item.name }}"
         image: "{{ nova.image_name }}"
         flavor: "{{ nova.flavor_name }}"
         security_groups:
@@ -68,8 +68,8 @@
           - net-id: "{{ openstack_networks[0]['id'] }}"
         config_drive: yes
         delete_fip: yes
+        auto_ip: no
         timeout: 360
-        floating_ip_pools: "{{ nova.floating_ip_pool }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
@@ -83,17 +83,38 @@
       retries: 300
       with_items: "{{ server.results }}"
 
+    - name: Assing public address(es)
+      os_floating_ip:
+        cloud: molecule
+        server: "{{ item.name }}"
+        network: "{{ nova.floating_ip_pool }}"
+        wait: yes
+      register: floating_ip
+      with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for public address(es) assignment to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: os_jobs_floating_ip
+      until: os_jobs_floating_ip.finished
+      retries: 300
+      with_items: "{{ floating_ip.results }}"
+
     # Mandatory configuration for molecule to function.
 
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.openstack.name }}",
-          'address': "{{ item.openstack.accessIPv4 }}",
+          'instance': "{{ item.0.openstack.name }}",
+          'address': "{{ item.1.floating_ip.floating_ip_address }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}"}
-      with_items: "{{ os_jobs_server.results }}"
+      with_together:
+        - "{{ os_jobs_server.results }}"
+        - "{{ os_jobs_floating_ip.results }}"
       register: instance_config_dict
       when: server.changed | bool
 

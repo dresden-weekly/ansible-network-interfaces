@@ -9,7 +9,7 @@
     - name: Destroy molecule instance(s)
       os_server:
         cloud: molecule
-        name: "{{ nova.name }}"
+        name: "{{ item.name }}"
         delete_fip: yes
         state: absent
       register: server

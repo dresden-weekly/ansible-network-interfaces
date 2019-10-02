@@ -1,6 +1,8 @@
 ---
+molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
 molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
 molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
+molecule_scenario_directory: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}"
 molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
 ssh_user: ubuntu
@@ -19,11 +21,10 @@ security_group_rules:
     group: "{{ security_group.id }}"
 
 keypair_name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
-keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+keypair_path: "{{ molecule_ephemeral_directory }}/ssh_key"
 
 nova:
   flavor_name: "{{ lookup('env', 'MOLECULE_FLAVOR')|default('1C-1GB-10GB', true) }}"
   floating_ip_pool: public
-  image_name: "{{ lookup('env', 'MOLECULE_IMAGE')|default('Ubuntu 16.04 (20180628)', true) }}"
-  name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ lookup('env', 'TOX_ENV_NAME')|default('') }}"
+  image_name: "{{ lookup('env', 'MOLECULE_IMAGE')|default('Ubuntu 18.04', true) }}"
   network_name: molecule
