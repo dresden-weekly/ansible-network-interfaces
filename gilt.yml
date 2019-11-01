@@ -18,7 +18,7 @@
       dst: ./.gitignore
     - src: ansible/render-template.py
       dst: scripts/render-template.py
-    - src: ansible/main.yml
+    - src: ansible/meta.yml
       dst: meta/main.yml
     - src: ansible/README.md
       dst: ./
@@ -28,6 +28,6 @@
         - python scripts/render-template.py .travis.yml
         - python scripts/render-template.py README.md
         - python scripts/render-template.py meta/main.yml
-        - python scripts/render-template.py molecule/default/prepare.yml
+        - python scripts/render-template.py molecule/default/molecule.yml
         - python scripts/render-template.py tox.ini
         - rm -f scripts/render-template.py

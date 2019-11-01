@@ -4,7 +4,7 @@ galaxy_info:
   description: Role osism.network-interfaces
   company: Betacloud Solutions GmbH
   license: Apache License 2.0
-  min_ansible_version: 2.6
+  min_ansible_version: 2.7
   platforms:
     - name: Ubuntu
       versions:
