@@ -18,6 +18,8 @@
       dst: ./.gitignore
     - src: ansible/render-template.py
       dst: scripts/render-template.py
+    - src: ansible/trigger-travis.sh
+      dst: scripts/trigger-travis.sh
     - src: ansible/meta.yml
       dst: meta/main.yml
     - src: ansible/README.md
