@@ -13,12 +13,11 @@
 
 - name: Ensure basic networking tools are installed
   apt:
-    pkg: "{{ item }}"
+    name: "{{ network_interface_required_packages }}"
     state: present
     update_cache: yes
     cache_valid_time: 86400
   when: network_interfaces
-  with_items: "{{ network_interface_required_packages }}"
 
 - name: Create required directories
   file:
