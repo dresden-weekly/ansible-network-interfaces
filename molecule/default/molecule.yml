@@ -3,16 +3,13 @@ dependency:
   name: galaxy
 driver:
   name: openstack
-lint:
-  name: yamllint
-  options:
-    config-file: molecule/default/yamllint.yml
+lint: |
+  yamllint -c molecule/default/yamllint.yml .
+  ansible-lint --exclude molecule
 platforms:
   - name: $PLATFORM_NAME
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
   inventory:
     group_vars:
       all:
