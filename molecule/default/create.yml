@@ -58,6 +58,7 @@
     - name: Create molecule instance(s)
       os_server:
         cloud: molecule
+        availability_zone: "{{ nova.availability_zone }}"
         name: "{{ item.name }}"
         image: "{{ nova.image_name }}"
         flavor: "{{ nova.flavor_name }}"

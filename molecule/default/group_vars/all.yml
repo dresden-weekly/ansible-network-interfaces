@@ -24,7 +24,8 @@ keypair_name: "molecule-{{ lookup('env', 'TRAVIS_JOB_ID')|default('') }}-{{ look
 keypair_path: "{{ molecule_ephemeral_directory }}/ssh_key"
 
 nova:
+  availability_zone: south-2
   flavor_name: "{{ lookup('env', 'MOLECULE_FLAVOR')|default('1C-1GB-10GB', true) }}"
-  floating_ip_pool: public
+  floating_ip_pool: external
   image_name: "{{ lookup('env', 'MOLECULE_IMAGE')|default('Ubuntu 18.04', true) }}"
   network_name: molecule
