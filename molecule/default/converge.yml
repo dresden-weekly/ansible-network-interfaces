@@ -8,4 +8,4 @@
     network_allow_service_restart: no
 
   roles:
-    - role: ansible-network-interfaces
+    - role: ansible-network

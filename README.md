@@ -1,7 +1,7 @@
-# Ansible osism.network-interfaces
+# Ansible osism.network
 
-[![Build Status](https://travis-ci.org/osism/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/osism/ansible-network-interfaces)
-[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-osism.network--interfaces-blue.svg)](https://galaxy.ansible.com/osism/network-interfaces/)
+[![Build Status](https://travis-ci.org/osism/ansible-network.svg?branch=master)](https://travis-ci.org/osism/ansible-network)
+[![Ansible Galaxy](https://img.shields.io/badge/Ansible%20Galaxy-osism.network-blue.svg)](https://galaxy.ansible.com/osism/network/)
 ![Ansible 2.7](https://img.shields.io/badge/Ansible-2.7-green.png?style=flat)
 ![Ansible 2.8](https://img.shields.io/badge/Ansible-2.8-green.png?style=flat)
 ![Ansible 2.9](https://img.shields.io/badge/Ansible-2.9-green.png?style=flat)
