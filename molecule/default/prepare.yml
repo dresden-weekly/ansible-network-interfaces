@@ -3,4 +3,9 @@
   hosts: all
 
   roles: []
-  tasks: []
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      become: true

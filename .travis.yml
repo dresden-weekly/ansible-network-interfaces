@@ -13,35 +13,35 @@ jobs:
     - stage: run tests
       script: tox -e $TOX_ENV
       env:
-        - TOX_ENV=ansible27-xenial
-      python: 3.6
-    - stage: run tests
-      script: tox -e $TOX_ENV
-      env:
-        - TOX_ENV=ansible27-bionic
-      python: 3.6
-    - stage: run tests
-      script: tox -e $TOX_ENV
-      env:
         - TOX_ENV=ansible28-xenial
-      python: 3.6
+      python: 3.8
     - stage: run tests
       script: tox -e $TOX_ENV
       env:
         - TOX_ENV=ansible28-bionic
-      python: 3.6
+      python: 3.8
+    - stage: run tests
+      script: tox -e $TOX_ENV
+      env:
+        - TOX_ENV=ansible28-focal
+      python: 3.8
     - stage: run tests
       script: tox -e $TOX_ENV
       env:
         - TOX_ENV=ansible29-xenial
-      python: 3.6
+      python: 3.8
     - stage: run tests
       script: tox -e $TOX_ENV
       env:
         - TOX_ENV=ansible29-bionic
-      python: 3.6
+      python: 3.8
+    - stage: run tests
+      script: tox -e $TOX_ENV
+      env:
+        - TOX_ENV=ansible29-focal
+      python: 3.8
     - stage: post processing
-      python: 3.6
+      python: 3.8
       script: bash scripts/trigger-travis.sh osism docker-osism-ansible $TRAVIS_ACCESS_TOKEN "triggered by $TRAVIS_REPO_SLUG ($TRAVIS_COMMIT)"
       if: branch = "master" AND type = "push"
 
