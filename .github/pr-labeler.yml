@@ -1,0 +1,10 @@
+'Type: Bugfix': ['fix/*', 'issue/*']
+'Type: Build': build/*
+'Type: CI': ['ci/*', 'travis/*', 'zuul/*']
+'Type: Documentation': ['docs/*', 'doc/*', 'documentation/*']
+'Type: Feature': ['feature/*', 'feat/*']
+'Type: Maintenance': chore/*
+'Type: Refactoring': ['refactor/*', 'refactoring/*']
+'Type: Release': release/*
+'Type: Style': style/*
+'Type: Testing': ['test/*', 'testing/*']

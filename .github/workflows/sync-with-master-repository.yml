@@ -1,0 +1,28 @@
+name: Sync with master repository
+
+on:
+  schedule: 
+    - cron: "0 0 * * *"
+  repository_dispatch:
+    types: [sync-with-master-repository]
+
+jobs:
+  sync-with-master-repository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - run: pip3 install python-gilt jinja2
+      - uses: technote-space/create-pr-action@v2
+        with:
+          EXECUTE_COMMANDS: |
+            gilt overlay
+            gilt overlay
+          COMMIT_EMAIL: 'github+actions@osism.de'
+          COMMIT_MESSAGE: 'chore: sync with master repository'
+          COMMIT_NAME: 'GitHub Actions'
+          ONLY_DEFAULT_BRANCH: true
+          PR_BRANCH_NAME: 'sync-with-master-repository'
+          PR_BRANCH_PREFIX: 'chore/'
+          PR_TITLE: 'chore: sync with master repository'
