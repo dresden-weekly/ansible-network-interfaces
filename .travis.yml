@@ -44,11 +44,3 @@ jobs:
       python: 3.8
       script: bash scripts/trigger-travis.sh osism docker-osism-ansible $TRAVIS_ACCESS_TOKEN "triggered by $TRAVIS_REPO_SLUG ($TRAVIS_COMMIT)"
       if: branch = "master" AND type = "push"
-
-notifications:
-  irc:
-    channels:
-      - "irc.freenode.org#osism"
-    template:
-      - "%{result} %{repository_slug}: %{commit_subject} %{build_url}"
-    skip_join: true

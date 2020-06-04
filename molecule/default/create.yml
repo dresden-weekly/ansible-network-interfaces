@@ -1,5 +1,5 @@
 ---
-- name: Create
+- name: Playbook for resource creation
   hosts: localhost
   connection: local
   gather_facts: false
@@ -23,7 +23,7 @@
         remote_ip_prefix: "{{ item.cidr | default(omit) }}"
         remote_group: "{{ item.group | default(omit) }}"
         ethertype: "{{ item.ethertype | default(omit) }}"
-      with_items: "{{ security_group_rules }}"
+      loop: "{{ security_group_rules }}"
 
     - name: Test for presence of local keypair
       stat:
@@ -50,11 +50,6 @@
         mode: 0600
       when: keypair.changed
 
-    - name: Gather facts about network for use with instance creation
-      os_networks_facts:
-        cloud: molecule
-        name: "{{ nova.network_name }}"
-
     - name: Create molecule instance(s)
       os_server:
         cloud: molecule
@@ -66,13 +61,13 @@
           - "{{ security_group_name }}"
         key_name: "{{ keypair_name }}"
         nics:
-          - net-id: "{{ openstack_networks[0]['id'] }}"
+          - net-name: "{{ nova.network_name }}"
         config_drive: yes
         delete_fip: yes
         auto_ip: no
         timeout: 360
       register: server
-      with_items: "{{ molecule_yml.platforms }}"
+      loop: "{{ molecule_yml.platforms }}"
       async: 7200
       poll: 0
 
@@ -82,7 +77,7 @@
       register: os_jobs_server
       until: os_jobs_server.finished
       retries: 300
-      with_items: "{{ server.results }}"
+      loop: "{{ server.results }}"
 
     - name: Assing public address(es)
       os_floating_ip:
@@ -91,7 +86,7 @@
         network: "{{ nova.floating_ip_pool }}"
         wait: yes
       register: floating_ip
-      with_items: "{{ molecule_yml.platforms }}"
+      loop: "{{ molecule_yml.platforms }}"
       async: 7200
       poll: 0
 
@@ -101,7 +96,7 @@
       register: os_jobs_floating_ip
       until: os_jobs_floating_ip.finished
       retries: 300
-      with_items: "{{ floating_ip.results }}"
+      loop: "{{ floating_ip.results }}"
 
     # Mandatory configuration for molecule to function.
 
@@ -135,5 +130,4 @@
         port: "{{ ssh_port }}"
         host: "{{ item.address }}"
         search_regex: SSH
-        delay: 10
-      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
+      loop: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"

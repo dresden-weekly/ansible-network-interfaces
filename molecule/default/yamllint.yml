@@ -4,6 +4,7 @@ extends: default
 ignore: |
   .tox
   .git
+  .github
 
 rules:
   line-length:

@@ -19,3 +19,13 @@ verifier:
   enabled: false
 scenario:
   name: default
+  test_sequence:
+    - dependency
+    - lint
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - destroy

@@ -1,5 +1,5 @@
 ---
-- name: Destroy
+- name: Playbook for resource destruction
   hosts: localhost
   connection: local
   gather_facts: false
@@ -13,7 +13,7 @@
         delete_fip: yes
         state: absent
       register: server
-      with_items: "{{ molecule_yml.platforms }}"
+      loop: "{{ molecule_yml.platforms }}"
       async: 7200
       poll: 0
 
@@ -23,7 +23,7 @@
       register: os_jobs
       until: os_jobs.finished
       retries: 300
-      with_items: "{{ server.results }}"
+      loop: "{{ server.results }}"
 
     - name: Delete remote keypair
       os_keypair:

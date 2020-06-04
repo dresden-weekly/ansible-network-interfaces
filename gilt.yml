@@ -2,6 +2,8 @@
 - git: https://github.com/osism/travis-master.git
   version: master
   files:
+    - src: github/*.yml
+      dst: .github/
     - src: molecule/ansible.cfg
       dst: molecule/default/ansible.cfg
     - src: molecule/*.yml
