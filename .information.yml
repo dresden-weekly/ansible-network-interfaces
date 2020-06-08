@@ -1,4 +1,4 @@
 ---
-ansible_role_name: network-interfaces
+ansible_role_name: network
 readme_note: This role is based on the role ``dresden-weekly.network-interfaces`` (https://github.com/dresden-weekly/ansible-network-interfaces).
 travis_decrypt_key: 1568d26de99d
