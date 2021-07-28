@@ -11,7 +11,7 @@ sudo: required
 language: python
 
 install:
-  - "pip install ansible==2.1.1.0 ansible-lint==3.4.7"
+  - "pip install ansible-core==2.11.3 ansible-lint==3.4.7"
 script:
   - cd tests
   - echo "Checking Ansible syntax"

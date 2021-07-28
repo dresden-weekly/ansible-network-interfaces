@@ -7,9 +7,13 @@ This is an Ansible role that manages network interface configuration as it is fo
 Requirements
 ------------
 
-Ubuntu 12.04 (Precise), Ubuntu 14.04 (Trusty) or Ubuntu 16.04 (Xenial)
+Any of these Ubuntu versions:
+* 12.04 (Precise)
+* 14.04 (Trusty)
+* 16.04 (Xenial)
+* 20.04 (Focal)
 
-May work with other versions, but has never been tested.
+It may work with other versions, but has never been tested.
 
 Dependencies
 ------------
@@ -50,7 +54,7 @@ Example Playbook
       auto: true
       family: inet
       method: dhcp
-      
+
     - device: wlan0
       description: sample wlan interface using wpa_supplicant (note: does not install wpasupplicant)
       auto: true

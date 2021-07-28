@@ -1,7 +1,7 @@
 ---
 
 - name: Gather variables for each operating system
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
   - "{{ ansible_distribution | lower }}-{{ ansible_distribution_version | lower }}.yml"
   - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version | lower }}.yml"
@@ -12,19 +12,18 @@
   - always
 
 - name: ensure basic networking tools are installed
-  apt:
-    pkg: "{{ item }}"
+  ansible.builtin.apt:
+    pkg: "{{ network_interface_required_packages | list }}"
     state: present
     update_cache: yes
     cache_valid_time: 86400
   when: network_interfaces
-  with_items: "{{ network_interface_required_packages }}"
 
 - include: all_interfaces.yml
   when: network_interfaces
 
 - name: configurations
-  template:
+  ansible.builtin.template:
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
     mode: "{{ network_interface_permissions }}"

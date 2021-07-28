@@ -1,11 +1,11 @@
 ---
 - name: create directory
-  file:
+  ansible.builtin.file:
     path: "{{ network_interface_path }}"
     state: directory
 
 - name: all interfaces
-  template:
+  ansible.builtin.template:
     src: all_interfaces.j2
     dest: "{{ network_all_interfaces_path }}"
   notify:

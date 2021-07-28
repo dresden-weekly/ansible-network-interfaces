@@ -1,7 +1,7 @@
 ---
 
 - name: network all interfaces changed
-  service:
+  ansible.builtin.service:
     name: "{{ network_service }}"
     state: restarted
   when: network_allow_service_restart
@@ -10,7 +10,7 @@
 - name: network restart interface service
 # schema: network_configuration_result.results
 #   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
-  service:
+  ansible.builtin.service:
     name: "{{ network_service }}"
     state: restarted
     arguments: "INTERFACE={{ item.item.0 }}"
@@ -24,7 +24,7 @@
   - skip_ansible_lint
 
 - name: network restart interface command
-  shell: >
+  ansible.builtin.shell: >
     {{ network_interface_restart_commands[ network_restart_method ] }}
   when: >
     (network_service_restart_result is undefined or not network_service_restart_result.changed)
