@@ -1,23 +1,23 @@
 galaxy_info:
   author: Andreas Reischuck
-  description: 'This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers'
+  description: "This is an Ansible role that manages network interface configuration as it is found on Debian/Ubuntu servers"
   company: Dresden Weekly
   license: MIT
   min_ansible_version: 2.10
   platforms:
-  - name: Ubuntu
-    versions:
-    - precise
-    - trusty
-    - xenial
-    - focal
+    - name: Ubuntu
+      versions:
+        - precise
+        - trusty
+        - xenial
+        - focal
   #
   # Below are all categories currently available. Just as with
   # the platforms above, uncomment those that apply to your role.
   #
   categories:
-  - networking
-  #- packaging
-  - system
+    - networking
+    #- packaging
+    - system
   #- web
 dependencies: []

@@ -1,5 +1,4 @@
 ---
-
 - name: Simple test playbook
   hosts: all
   become: yes
@@ -19,13 +18,13 @@
         gateway: 192.168.2.1
         mtu: 9000
         nameservers:
-        - 8.8.8.8
-        - 8.8.4.4
+          - 8.8.8.8
+          - 8.8.4.4
         metric: 10
     eth1_config: "{{ lookup('file', '/etc/network/interfaces.d/device-eth1') }}"
 
   roles:
-    - { role: ../../ansible-network-interfaces }
+    - role: ".."
 
   post_tasks:
     - name: Show devices
@@ -41,7 +40,7 @@
         that: eth1_stat.stat.exists
         msg: "device-eth1 interface config was not created"
       tags:
-      - skip_ansible_lint
+        - skip_ansible_lint
 
     - name: Show the eth1 configuration
       debug:
@@ -49,16 +48,16 @@
 
     - assert:
         that:
-        - eth1_config | search("\n{{ item }}\n")
+          - eth1_config | search("\n{{ item }}\n")
         msg: "device-eth1 configuration does not meet expectations"
       with_items:
-      - "auto eth1"
-      - "iface eth1 inet static"
-      - "  address 192.168.2.100"
-      - "  gateway 192.168.2.1"
-      - "  netmask 193.168.2.255"
-      - "  network 192.168.2.0"
-      - "  mtu 9000"
-      - "  metric 10"
+        - "auto eth1"
+        - "iface eth1 inet static"
+        - "  address 192.168.2.100"
+        - "  gateway 192.168.2.1"
+        - "  netmask 193.168.2.255"
+        - "  network 192.168.2.0"
+        - "  mtu 9000"
+        - "  metric 10"
       tags:
-      - skip_ansible_lint
+        - skip_ansible_lint

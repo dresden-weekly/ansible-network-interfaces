@@ -1,5 +1,4 @@
 ---
-
 - name: network all interfaces changed
   ansible.builtin.service:
     name: "{{ network_service }}"
@@ -8,8 +7,8 @@
   register: network_service_restart_result
 
 - name: network restart interface service
-# schema: network_configuration_result.results
-#   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
+  # schema: network_configuration_result.results
+  #   = [ { "item": [ <device>, [<config>, ...] ], ... }, ... ]
   ansible.builtin.service:
     name: "{{ network_service }}"
     state: restarted
@@ -21,7 +20,7 @@
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint
 
 - name: network restart interface command
   ansible.builtin.shell: >
@@ -33,4 +32,4 @@
     and item.item.1.0.auto | default(true)
   with_items: "{{ network_configuration_result.results | default([]) }}"
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint
