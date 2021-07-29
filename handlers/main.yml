@@ -18,7 +18,7 @@
     and ('service' == network_restart_method)
     and item.changed
     and item.item.1.0.auto | default(true)
-  with_items: "{{ network_configuration_result.results | default([]) }}"
+  loop: "{{ network_configuration_result.results | default([]) | flatten(levels=1) }}"
   tags:
     - skip_ansible_lint
 
@@ -30,6 +30,6 @@
     and (network_restart_method in network_interface_restart_commands)
     and item.changed
     and item.item.1.0.auto | default(true)
-  with_items: "{{ network_configuration_result.results | default([]) }}"
+  loop: "{{ network_configuration_result.results | default([]) | flatten(levels=1) }}"
   tags:
     - skip_ansible_lint

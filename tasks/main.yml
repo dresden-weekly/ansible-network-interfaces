@@ -26,8 +26,7 @@
     src: device.j2
     dest: "{{ network_interface_path }}/device-{{ item.0 }}"
     mode: "{{ network_interface_permissions }}"
-  with_items:
-    - "{{ network_interfaces | default([]) | groupby('device') }}"
+  loop: "{{ network_interfaces | default([]) | groupby('device') }}"
   register: network_configuration_result
   notify:
     - network restart interface service

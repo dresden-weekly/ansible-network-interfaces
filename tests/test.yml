@@ -50,7 +50,7 @@
         that:
           - eth1_config | search("\n{{ item }}\n")
         msg: "device-eth1 configuration does not meet expectations"
-      with_items:
+      loop:
         - "auto eth1"
         - "iface eth1 inet static"
         - "  address 192.168.2.100"
